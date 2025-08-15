@@ -90,7 +90,7 @@ if query:
     
     # Handle thank you messages
     elif any(phrase in query.lower() for phrase in ["thank you", "thanks", "thx"]):
-        bot_reply = "You're very welcome! 😊 Feel free to ask me anything else about SRM or any other topic. I'm here to help!"
+        bot_reply = "You're very welcome! 😊 Feel free to ask me anything else about SRM or any other topic. I'm here to help you!"
     
     # Let Gemini handle everything else in SRM context
     else:
