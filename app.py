@@ -214,5 +214,6 @@ if query:
         st.write(bot_reply)
 
 # -------------------- Footer --------------------
-st.markdown("---")
+# Custom divider above footer
+st.markdown(f"<div class='custom-divider'></div>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; font-size:12px;'>MIST AI - Powered by Google Gemini | Built for SRM Community</p>", unsafe_allow_html=True)
