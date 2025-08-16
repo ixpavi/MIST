@@ -16,40 +16,35 @@ profanity.load_censor_words()
 # Streamlit page configuration
 st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layout="centered")
 
-# 🎨 Custom SRM Theme (Option 1: Maroon + Gold + Blue)
+# 🎨 Custom Modern AI Theme (Option 2: Indigo + Cyan + Lime Green)
 custom_css = """
 <style>
 /* General background */
 body, .stApp {
-    background-color: #F9F9F9;
-    color: #333333;
+    background-color: #FFFFFF;
+    color: #1F2937; /* Charcoal text */
+    font-family: 'Segoe UI', sans-serif;
 }
 
 /* Title */
 h1 {
-    color: #800000 !important; /* Maroon */
+    color: #4F46E5 !important; /* Indigo */
     font-weight: bold;
 }
 
 /* Subtext */
 p {
-    color: #333333;
+    color: #374151;
 }
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
-    background-color: #FFF8F0; /* very light maroon tint */
-}
-
-/* Sidebar title */
-.sidebar .sidebar-content {
-    color: #800000;
-    font-weight: bold;
+    background-color: #F0F4FF; /* Light indigo tint */
 }
 
 /* Buttons */
 div.stButton > button {
-    background-color: #800000;
+    background: linear-gradient(90deg, #4F46E5, #06B6D4); /* Indigo → Cyan */
     color: white;
     border-radius: 10px;
     border: none;
@@ -58,20 +53,20 @@ div.stButton > button {
     transition: 0.3s;
 }
 div.stButton > button:hover {
-    background-color: #FFD700; /* Gold */
-    color: #1E3A8A; /* Blue text on hover */
+    background: linear-gradient(90deg, #06B6D4, #4F46E5);
+    color: #84CC16; /* Lime Green text */
 }
 
 /* Chat messages */
 .stChatMessage.user {
-    background-color: #FFD70020; /* Light gold tint */
-    border-left: 4px solid #FFD700;
+    background-color: #E0F7FA; /* Very light cyan tint */
+    border-left: 4px solid #06B6D4;
     border-radius: 8px;
     padding: 0.5em;
 }
 .stChatMessage.assistant {
-    background-color: #1E3A8A20; /* Light blue tint */
-    border-left: 4px solid #1E3A8A;
+    background-color: #EEF2FF; /* Very light indigo tint */
+    border-left: 4px solid #4F46E5;
     border-radius: 8px;
     padding: 0.5em;
 }
