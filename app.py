@@ -25,14 +25,14 @@ DARK_MODE = {
 }
 
 LIGHT_MODE = {
-    "bg": "#B0C4DE", #Light steel Blue
+    "bg": "#f8fafc",  # Neutral light background
     "text": "#000000",  # Black text
     "header": "#2563eb",  # Blue
     "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",
     "button_hover": "linear-gradient(90deg, #06b6d4, #3b82f6)",
     "button_text": "#111827",
-    "user_bubble": "#dbeafe",  # Smooth Indigo-100
-    "bot_bubble": "#e0f2fe"    # Light Sky-100
+    "user_bubble": "#dbeafe",  # Indigo-100 (smooth, visible)
+    "bot_bubble": "#e0f2fe"    # Sky-100 (smooth, visible)
 }
 
 if "theme" not in st.session_state:
@@ -86,12 +86,14 @@ st.markdown(
     /* Chat bubbles */
     .stChatMessage.user {{
         background-color: {theme['user_bubble']} !important;
+        color: {theme['text']} !important;
         border-radius: 12px;
         padding: 8px 12px;
         margin: 4px 0;
     }}
     .stChatMessage.assistant {{
         background-color: {theme['bot_bubble']} !important;
+        color: {theme['text']} !important;
         border-radius: 12px;
         padding: 8px 12px;
         margin: 4px 0;
