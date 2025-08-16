@@ -16,34 +16,11 @@ profanity.load_censor_words()
 # Streamlit page configuration
 st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layout="centered")
 
-# 🎨 Custom Modern AI Theme (Option 2: Indigo + Cyan + Lime Green)
+# 🎨 Custom Styles (Header Indigo + Gradient Buttons)
 custom_css = """
 <style>
-/* General background */
-body, .stApp {
-    background-color: #FFFFFF;
-    color: #1F2937; /* Charcoal text */
-    font-family: 'Segoe UI', sans-serif;
-}
-
-/* Title */
-h1 {
-    color: #4F46E5 !important; /* Indigo */
-    font-weight: bold;
-}
-
-/* Subtext */
-p {
-    color: #374151;
-}
-
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #F0F4FF; /* Light indigo tint */
-}
-
-/* Buttons */
-div.stButton > button {
+/* Sidebar buttons */
+div[data-testid="stSidebar"] div.stButton > button {
     background: linear-gradient(90deg, #4F46E5, #06B6D4); /* Indigo → Cyan */
     color: white;
     border-radius: 10px;
@@ -52,23 +29,9 @@ div.stButton > button {
     font-weight: 500;
     transition: 0.3s;
 }
-div.stButton > button:hover {
-    background: linear-gradient(90deg, #06B6D4, #4F46E5);
-    color: #84CC16; /* Lime Green text */
-}
-
-/* Chat messages */
-.stChatMessage.user {
-    background-color: #E0F7FA; /* Very light cyan tint */
-    border-left: 4px solid #06B6D4;
-    border-radius: 8px;
-    padding: 0.5em;
-}
-.stChatMessage.assistant {
-    background-color: #EEF2FF; /* Very light indigo tint */
-    border-left: 4px solid #4F46E5;
-    border-radius: 8px;
-    padding: 0.5em;
+div[data-testid="stSidebar"] div.stButton > button:hover {
+    background: linear-gradient(90deg, #06B6D4, #4F46E5); /* Flip gradient */
+    color: #84CC16 !important; /* Lime Green text */
 }
 </style>
 """
@@ -114,8 +77,8 @@ if st.sidebar.button("ℹ️ About"):
 if st.sidebar.button("❓ Help"):
     st.sidebar.warning("Type your queries in the chat box. I will answer in the SRM context.")
 
-# SRM Header
-st.markdown("<h1 style='text-align:center;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
+# SRM Header (Indigo color)
+st.markdown("<h1 style='text-align:center; color:#4F46E5;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
 if st.session_state.username:
     st.markdown(f"<p style='text-align:center;'>👋 Hello, {st.session_state.username}! I'm your friendly SRM guide.</p>", unsafe_allow_html=True)
 else:
