@@ -14,25 +14,27 @@ profanity.load_censor_words()
 
 # -------------------- Theme Config --------------------
 DARK_MODE = {
-    "bg": "#0f172a",  # Slate-900
-    "text": "#e0f2fe",  # Sky-100
-    "header": "#4F46E5",  # Indigo
+    "bg": "#0f172a",        # Slate-900
+    "text": "#e0f2fe",      # Sky-100
+    "header": "#4F46E5",    # Indigo
     "button": "linear-gradient(90deg, #4F46E5, #06B6D4)",
     "button_hover": "linear-gradient(90deg, #06B6D4, #4F46E5)",
     "button_text": "#a3e635",  # Lime
     "user_bubble": "#1e40af",  # Indigo-800
-    "bot_bubble": "#0891b2"    # Cyan-700
+    "bot_bubble": "#0891b2",   # Cyan-700
+    "bubble_text": "#e0f2fe"   # Keep light text in dark mode
 }
 
 LIGHT_MODE = {
-    "bg": "#f8fafc",  # Neutral light background
-    "text": "#000000",  # Black text
-    "header": "#2563eb",  # Blue
+    "bg": "#B0C4DE",        # Light Steel Blue
+    "text": "#000000",      # Black
+    "header": "#2563eb",    # Blue
     "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",
     "button_hover": "linear-gradient(90deg, #06b6d4, #3b82f6)",
     "button_text": "#111827",
-    "user_bubble": "#dbeafe",  # Indigo-100 (smooth, visible)
-    "bot_bubble": "#e0f2fe"    # Sky-100 (smooth, visible)
+    "user_bubble": "#dbeafe",  # Indigo-100
+    "bot_bubble": "#e0f2fe",   # Sky-100
+    "bubble_text": "#000000"   # Force black text in bubbles
 }
 
 if "theme" not in st.session_state:
@@ -86,14 +88,14 @@ st.markdown(
     /* Chat bubbles */
     .stChatMessage.user {{
         background-color: {theme['user_bubble']} !important;
-        color: {theme['text']} !important;
+        color: {theme['bubble_text']} !important;
         border-radius: 12px;
         padding: 8px 12px;
         margin: 4px 0;
     }}
     .stChatMessage.assistant {{
         background-color: {theme['bot_bubble']} !important;
-        color: {theme['text']} !important;
+        color: {theme['bubble_text']} !important;
         border-radius: 12px;
         padding: 8px 12px;
         margin: 4px 0;
