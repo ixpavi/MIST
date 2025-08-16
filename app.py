@@ -15,6 +15,22 @@ profanity.load_censor_words()
 # Streamlit page configuration
 st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layout="centered")
 
+# Sidebar with buttons
+st.sidebar.title("⚙️ Controls")
+
+# Clear Chat button
+if st.sidebar.button("🗑️ Clear Chat"):
+    st.session_state.messages = []
+    st.session_state.response_cache = {}
+    st.sidebar.success("Chat cleared!")
+
+# You can add more buttons here
+if st.sidebar.button("ℹ️ About"):
+    st.sidebar.info("MIST AI - SRM Virtual Assistant\n\nPowered by Google Gemini\nBuilt for SRM Community")
+
+if st.sidebar.button("❓ Help"):
+    st.sidebar.warning("Type your queries in the chat box. I will answer in the SRM context.")
+
 # SRM Header
 st.markdown("<h1 style='text-align:center; color:#800000;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center;'>Your friendly SRM guide for everything university-related</p>", unsafe_allow_html=True)
@@ -35,21 +51,6 @@ def get_srm_response(query):
         You are MIST AI, the helpful virtual assistant for SRM Institute of Science and Technology (SRMIST).
 
         CONTEXT: SRM is a leading private university in India with main campus in Kattankulathur, Chennai, and other campuses in Vadapalani, Ramapuram, Delhi NCR, Sonepat, and Amaravati. Known for engineering, medicine, management, law, and research programs.
-
-        INSTRUCTIONS:
-        1. Always relate your responses to SRM University context, even for general topics
-        2. Be specific about SRM programs, facilities, departments, or campus life when possible
-        3. If asked about general topics, connect them to SRM student experience
-        4. For official queries (admissions, fees), provide helpful info but suggest contacting SRM directly for latest details
-        5. Keep responses informative yet conversational (100-200 words typically)
-        6. Use a friendly, helpful tone like a knowledgeable SRM student or staff member
-
-        EXAMPLES:
-        - "computer science" → Talk about CSE department at SRM, curriculum, faculty, placements, labs
-        - "food" → Discuss SRM dining halls, mess facilities, popular food spots near campus
-        - "weather" → Mention Chennai climate and how it affects SRM campus life, what to bring
-        - "sports" → Describe SRM sports facilities, teams, tournaments, fitness centers
-        - "artificial intelligence" → Explain AI/ML programs in SRM, research opportunities, faculty expertise
 
         Question: {query}
 
@@ -80,32 +81,24 @@ if query:
     if profanity.contains_profanity(query):
         bot_reply = "⚠️ Please keep our conversation respectful and appropriate."
     
-    # Handle simple greetings without API call (save API usage)
     elif query.lower().strip() in ["hi", "hello", "hey", "sup", "what's up"]:
         bot_reply = "Hello! 😊 I'm MIST AI, your SRM assistant. I can help you with anything about SRM University or answer general questions in the SRM context. What would you like to know?"
     
-    # Handle basic bot info queries
     elif any(phrase in query.lower() for phrase in ["who are you", "what can you do", "what are you", "help me"]):
         bot_reply = "I'm MIST AI, your virtual assistant for SRM Institute of Science and Technology! 🎓\n\nI can help you with:\n• SRM admissions, courses, and departments\n• Campus facilities and student life\n• General questions answered in SRM context\n• Academic programs and opportunities\n\nJust ask me anything!"
     
-    # Handle thank you messages
     elif any(phrase in query.lower() for phrase in ["thank you", "thanks", "thx"]):
         bot_reply = "You're very welcome! 😊 Feel free to ask me anything else about SRM or any other topic. I'm here to help you!"
     
-    # Let Gemini handle everything else in SRM context
     else:
-        # Check cache first to save API calls
         cache_key = query.lower().strip()
         if cache_key in st.session_state.response_cache:
             bot_reply = st.session_state.response_cache[cache_key]
         else:
-            # Show loading indicator
             with st.spinner("Let me think about that in SRM context..."):
                 bot_reply = get_srm_response(query)
-                # Cache the response
                 st.session_state.response_cache[cache_key] = bot_reply
 
-    # Show bot reply
     st.session_state.messages.append({"role": "assistant", "content": bot_reply})
     with st.chat_message("assistant"):
         st.write(bot_reply)
