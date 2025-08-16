@@ -4,7 +4,8 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env file
+# Load environment variables
+load_dotenv()
 # Configure Gemini AI
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.0-flash")
@@ -29,6 +30,23 @@ if st.sidebar.button("🗑️ Clear Chat"):
     st.session_state.messages = []
     st.session_state.response_cache = {}
     st.sidebar.success("Chat cleared!")
+
+# Export Chat button
+if st.sidebar.button("💾 Export Chat"):
+    if st.session_state.get("messages", []):
+        chat_text = ""
+        for msg in st.session_state.messages:
+            role = "You" if msg["role"] == "user" else "MIST AI"
+            chat_text += f"{role}: {msg['content']}\n\n"
+
+        st.sidebar.download_button(
+            label="⬇️ Download Chat (.txt)",
+            data=chat_text,
+            file_name="chat_history.txt",
+            mime="text/plain"
+        )
+    else:
+        st.sidebar.warning("No chat history to export!")
 
 # About button
 if st.sidebar.button("ℹ️ About"):
