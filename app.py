@@ -16,22 +16,84 @@ profanity.load_censor_words()
 # Streamlit page configuration
 st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layout="centered")
 
-# 🎨 Custom Styles (Header Indigo + Gradient Buttons)
+# 🎨 Custom Styles (Header Indigo + Gradient Buttons everywhere)
 custom_css = """
 <style>
-/* Sidebar buttons */
-div[data-testid="stSidebar"] div.stButton > button {
-    background: linear-gradient(90deg, #4F46E5, #06B6D4); /* Indigo → Cyan */
-    color: white;
+/* Header text color (Indigo) */
+h1 {
+    color: #4F46E5 !important;
+}
+
+/* Generic buttons (main area) */
+div.stButton > button {
+    background: linear-gradient(90deg, #4F46E5, #06B6D4);
+    color: #FFFFFF;
     border-radius: 10px;
     border: none;
     padding: 0.6em 1em;
     font-weight: 500;
-    transition: 0.3s;
+    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
+}
+div.stButton > button:hover {
+    background: linear-gradient(90deg, #06B6D4, #4F46E5);
+    color: #84CC16 !important;  /* Lime */
+    transform: translateY(-1px);
+}
+
+/* Sidebar buttons */
+div[data-testid="stSidebar"] div.stButton > button {
+    background: linear-gradient(90deg, #4F46E5, #06B6D4);
+    color: #FFFFFF;
+    border-radius: 10px;
+    border: none;
+    padding: 0.6em 1em;
+    font-weight: 500;
+    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
 }
 div[data-testid="stSidebar"] div.stButton > button:hover {
-    background: linear-gradient(90deg, #06B6D4, #4F46E5); /* Flip gradient */
-    color: #84CC16 !important; /* Lime Green text */
+    background: linear-gradient(90deg, #06B6D4, #4F46E5);
+    color: #84CC16 !important;
+    transform: translateY(-1px);
+}
+
+/* Download button (both main & sidebar) */
+div.stDownloadButton > button,
+div[data-testid="stSidebar"] div.stDownloadButton > button {
+    background: linear-gradient(90deg, #4F46E5, #06B6D4);
+    color: #FFFFFF;
+    border-radius: 10px;
+    border: none;
+    padding: 0.6em 1em;
+    font-weight: 500;
+    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
+}
+div.stDownloadButton > button:hover,
+div[data-testid="stSidebar"] div.stDownloadButton > button:hover {
+    background: linear-gradient(90deg, #06B6D4, #4F46E5);
+    color: #84CC16 !important;
+    transform: translateY(-1px);
+}
+
+/* Chat input send button */
+div[data-testid="stChatInput"] button {
+    background: linear-gradient(90deg, #4F46E5, #06B6D4);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
+}
+div[data-testid="stChatInput"] button:hover {
+    background: linear-gradient(90deg, #06B6D4, #4F46E5);
+    color: #84CC16 !important;
+    transform: translateY(-1px);
+}
+
+/* Focus outline for accessibility */
+div.stButton > button:focus,
+div.stDownloadButton > button:focus,
+div[data-testid="stChatInput"] button:focus {
+    outline: 2px solid #84CC16;
+    outline-offset: 2px;
 }
 </style>
 """
@@ -77,8 +139,8 @@ if st.sidebar.button("ℹ️ About"):
 if st.sidebar.button("❓ Help"):
     st.sidebar.warning("Type your queries in the chat box. I will answer in the SRM context.")
 
-# SRM Header (Indigo color)
-st.markdown("<h1 style='text-align:center; color:#4F46E5;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
+# SRM Header (Indigo)
+st.markdown("<h1 style='text-align:center;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
 if st.session_state.username:
     st.markdown(f"<p style='text-align:center;'>👋 Hello, {st.session_state.username}! I'm your friendly SRM guide.</p>", unsafe_allow_html=True)
 else:
@@ -107,10 +169,8 @@ def get_srm_response(query):
 
         Provide a helpful SRM-focused response and address the user by name if available:
         """
-        
         response = model.generate_content(prompt)
         return response.text if response.text else "I couldn't generate a response. Please try again!"
-        
     except Exception:
         return "I'm experiencing technical difficulties right now. Please try again in a moment!"
 
@@ -131,22 +191,18 @@ if query:
     # Bot response logic
     if profanity.contains_profanity(query):
         bot_reply = "⚠️ Please keep our conversation respectful and appropriate."
-    
     elif query.lower().strip() in ["hi", "hello", "hey", "sup", "what's up"]:
         if st.session_state.username:
             bot_reply = f"Hello {st.session_state.username}! 😊 I'm MIST AI, your SRM assistant. What would you like to know today?"
         else:
             bot_reply = "Hello! 😊 I'm MIST AI, your SRM assistant. I can help you with anything about SRM University or answer general questions in the SRM context. What would you like to know?"
-    
     elif any(phrase in query.lower() for phrase in ["who are you", "what can you do", "what are you", "help me"]):
         bot_reply = "I'm MIST AI, your virtual assistant for SRM Institute of Science and Technology! 🎓\n\nI can help you with:\n• SRM admissions, courses, and departments\n• Campus facilities and student life\n• General questions answered in SRM context\n• Academic programs and opportunities\n\nJust ask me anything!"
-    
     elif any(phrase in query.lower() for phrase in ["thank you", "thanks", "thx"]):
         if st.session_state.username:
             bot_reply = f"You're very welcome, {st.session_state.username}! 😊 Feel free to ask me anything else about SRM or any other topic."
         else:
             bot_reply = "You're very welcome! 😊 Feel free to ask me anything else about SRM or any other topic. I'm here to help you!"
-    
     else:
         cache_key = query.lower().strip()
         if cache_key in st.session_state.response_cache:
