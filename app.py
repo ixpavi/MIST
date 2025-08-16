@@ -13,99 +13,82 @@ model = genai.GenerativeModel("gemini-2.0-flash")
 # Load profanity filter
 profanity.load_censor_words()
 
-# Streamlit page configuration
+# -------------------- Theme Config --------------------
+DARK_MODE = {
+    "bg": "#0f172a",  # Slate-900
+    "text": "#e0f2fe",  # Sky-100
+    "header": "#4F46E5",  # Indigo
+    "button": "linear-gradient(90deg, #4F46E5, #06B6D4)",
+    "button_hover": "linear-gradient(90deg, #06B6D4, #4F46E5)",
+    "button_text": "#a3e635"  # Lime
+}
+
+LIGHT_MODE = {
+    "bg": "#f9fafb",  # Gray-50
+    "text": "#1f2937",  # Gray-800
+    "header": "#2563eb",  # Blue
+    "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",
+    "button_hover": "linear-gradient(90deg, #06b6d4, #3b82f6)",
+    "button_text": "#111827"  # Gray-900
+}
+
+if "theme" not in st.session_state:
+    st.session_state.theme = "dark"
+theme = DARK_MODE if st.session_state.theme == "dark" else LIGHT_MODE
+
+# -------------------- Streamlit Page Config --------------------
 st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layout="centered")
 
-# 🎨 Custom Styles (Header Indigo + Gradient Buttons everywhere)
-custom_css = """
-<style>
-/* Header text color (Indigo) */
-h1 {
-    color: #4F46E5 !important;
-}
+# -------------------- Custom CSS --------------------
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-color: {theme['bg']};
+        color: {theme['text']};
+    }}
+    h1 {{
+        color: {theme['header']} !important;
+    }}
+    /* Generic buttons */
+    div.stButton > button,
+    div.stDownloadButton > button,
+    div[data-testid="stSidebar"] div.stButton > button,
+    div[data-testid="stSidebar"] div.stDownloadButton > button,
+    div[data-testid="stChatInput"] button {{
+        background: {theme['button']};
+        color: #fff;
+        border-radius: 10px;
+        border: none;
+        padding: 0.6em 1em;
+        font-weight: 500;
+        transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
+    }}
+    div.stButton > button:hover,
+    div.stDownloadButton > button:hover,
+    div[data-testid="stSidebar"] div.stButton > button:hover,
+    div[data-testid="stSidebar"] div.stDownloadButton > button:hover,
+    div[data-testid="stChatInput"] button:hover {{
+        background: {theme['button_hover']};
+        color: {theme['button_text']} !important;
+        transform: translateY(-1px);
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
-/* Generic buttons (main area) */
-div.stButton > button {
-    background: linear-gradient(90deg, #4F46E5, #06B6D4);
-    color: #FFFFFF;
-    border-radius: 10px;
-    border: none;
-    padding: 0.6em 1em;
-    font-weight: 500;
-    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
-}
-div.stButton > button:hover {
-    background: linear-gradient(90deg, #06B6D4, #4F46E5);
-    color: #84CC16 !important;  /* Lime */
-    transform: translateY(-1px);
-}
-
-/* Sidebar buttons */
-div[data-testid="stSidebar"] div.stButton > button {
-    background: linear-gradient(90deg, #4F46E5, #06B6D4);
-    color: #FFFFFF;
-    border-radius: 10px;
-    border: none;
-    padding: 0.6em 1em;
-    font-weight: 500;
-    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
-}
-div[data-testid="stSidebar"] div.stButton > button:hover {
-    background: linear-gradient(90deg, #06B6D4, #4F46E5);
-    color: #84CC16 !important;
-    transform: translateY(-1px);
-}
-
-/* Download button (both main & sidebar) */
-div.stDownloadButton > button,
-div[data-testid="stSidebar"] div.stDownloadButton > button {
-    background: linear-gradient(90deg, #4F46E5, #06B6D4);
-    color: #FFFFFF;
-    border-radius: 10px;
-    border: none;
-    padding: 0.6em 1em;
-    font-weight: 500;
-    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
-}
-div.stDownloadButton > button:hover,
-div[data-testid="stSidebar"] div.stDownloadButton > button:hover {
-    background: linear-gradient(90deg, #06B6D4, #4F46E5);
-    color: #84CC16 !important;
-    transform: translateY(-1px);
-}
-
-/* Chat input send button */
-div[data-testid="stChatInput"] button {
-    background: linear-gradient(90deg, #4F46E5, #06B6D4);
-    color: #FFFFFF;
-    border: none;
-    border-radius: 8px;
-    transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease;
-}
-div[data-testid="stChatInput"] button:hover {
-    background: linear-gradient(90deg, #06B6D4, #4F46E5);
-    color: #84CC16 !important;
-    transform: translateY(-1px);
-}
-
-/* Focus outline for accessibility */
-div.stButton > button:focus,
-div.stDownloadButton > button:focus,
-div[data-testid="stChatInput"] button:focus {
-    outline: 2px solid #84CC16;
-    outline-offset: 2px;
-}
-</style>
-"""
-st.markdown(custom_css, unsafe_allow_html=True)
-
-# Sidebar with buttons
+# -------------------- Sidebar --------------------
 st.sidebar.title("⚙️ Controls")
 
-# 🧑 User Profile
+# Theme toggle
+if st.sidebar.button("🌗 Toggle Dark/Light Mode"):
+    st.session_state.theme = "light" if st.session_state.theme == "dark" else "dark"
+    st.rerun()
+
+# User Profile
 if "username" not in st.session_state:
     st.session_state.username = ""
-
 st.session_state.username = st.sidebar.text_input("👤 Enter your name", st.session_state.username)
 
 # Clear Chat button
@@ -139,7 +122,7 @@ if st.sidebar.button("ℹ️ About"):
 if st.sidebar.button("❓ Help"):
     st.sidebar.warning("Type your queries in the chat box. I will answer in the SRM context.")
 
-# SRM Header (Indigo)
+# -------------------- Header --------------------
 st.markdown("<h1 style='text-align:center;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
 if st.session_state.username:
     st.markdown(f"<p style='text-align:center;'>👋 Hello, {st.session_state.username}! I'm your friendly SRM guide.</p>", unsafe_allow_html=True)
@@ -147,14 +130,13 @@ else:
     st.markdown("<p style='text-align:center;'>Your friendly SRM guide for everything university-related</p>", unsafe_allow_html=True)
 st.divider()
 
-# Initialize chat history and response cache
+# -------------------- Init Chat --------------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
 if "response_cache" not in st.session_state:
     st.session_state.response_cache = {}
 
-# Function to get SRM-contextualized response from Gemini
+# -------------------- Response Function --------------------
 def get_srm_response(query):
     """Generate SRM-contextualized response using Gemini AI"""
     try:
@@ -174,35 +156,35 @@ def get_srm_response(query):
     except Exception:
         return "I'm experiencing technical difficulties right now. Please try again in a moment!"
 
-# Display chat history
+# -------------------- Chat Display --------------------
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
-# Chat input
+# -------------------- Chat Input --------------------
 query = st.chat_input("Ask me anything about SRM or any topic...")
 
 if query:
-    # Show user message
+    # User message
     st.session_state.messages.append({"role": "user", "content": query})
     with st.chat_message("user"):
         st.write(query)
 
-    # Bot response logic
+    # Bot logic
     if profanity.contains_profanity(query):
         bot_reply = "⚠️ Please keep our conversation respectful and appropriate."
     elif query.lower().strip() in ["hi", "hello", "hey", "sup", "what's up"]:
         if st.session_state.username:
             bot_reply = f"Hello {st.session_state.username}! 😊 I'm MIST AI, your SRM assistant. What would you like to know today?"
         else:
-            bot_reply = "Hello! 😊 I'm MIST AI, your SRM assistant. I can help you with anything about SRM University or answer general questions in the SRM context. What would you like to know?"
+            bot_reply = "Hello! 😊 I'm MIST AI, your SRM assistant. I can help you with anything about SRM University. What would you like to know?"
     elif any(phrase in query.lower() for phrase in ["who are you", "what can you do", "what are you", "help me"]):
         bot_reply = "I'm MIST AI, your virtual assistant for SRM Institute of Science and Technology! 🎓\n\nI can help you with:\n• SRM admissions, courses, and departments\n• Campus facilities and student life\n• General questions answered in SRM context\n• Academic programs and opportunities\n\nJust ask me anything!"
     elif any(phrase in query.lower() for phrase in ["thank you", "thanks", "thx"]):
         if st.session_state.username:
             bot_reply = f"You're very welcome, {st.session_state.username}! 😊 Feel free to ask me anything else about SRM or any other topic."
         else:
-            bot_reply = "You're very welcome! 😊 Feel free to ask me anything else about SRM or any other topic. I'm here to help you!"
+            bot_reply = "You're very welcome! 😊 Feel free to ask me anything else about SRM or any other topic."
     else:
         cache_key = query.lower().strip()
         if cache_key in st.session_state.response_cache:
@@ -212,10 +194,11 @@ if query:
                 bot_reply = get_srm_response(query)
                 st.session_state.response_cache[cache_key] = bot_reply
 
+    # Show bot reply
     st.session_state.messages.append({"role": "assistant", "content": bot_reply})
     with st.chat_message("assistant"):
         st.write(bot_reply)
 
-# Footer
+# -------------------- Footer --------------------
 st.markdown("---")
-st.markdown("<p style='text-align:center; color:#666; font-size:12px;'>MIST AI - Powered by Google Gemini | Built for SRM Community</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:12px;'>MIST AI - Powered by Google Gemini | Built for SRM Community</p>", unsafe_allow_html=True)
