@@ -19,16 +19,20 @@ DARK_MODE = {
     "header": "#4F46E5",  # Indigo
     "button": "linear-gradient(90deg, #4F46E5, #06B6D4)",  # Indigo → Cyan
     "button_hover": "linear-gradient(90deg, #06B6D4, #4F46E5)",
-    "button_text": "#a3e635"  # Lime
+    "button_text": "#a3e635",  # Lime
+    "user_bubble": "#1e40af",  # Indigo-800
+    "bot_bubble": "#0891b2"   # Cyan-700
 }
 
 LIGHT_MODE = {
     "bg": "#f9fafb",  # Gray-50
-    "text": "#1f2937",  # Gray-800
+    "text": "#000000",  # Black text
     "header": "#2563eb",  # Blue
     "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",  # Blue → Cyan
     "button_hover": "linear-gradient(90deg, #06b6d4, #3b82f6)",
-    "button_text": "#111827"  # Gray-900
+    "button_text": "#111827",  # Gray-900
+    "user_bubble": "#e0e7ff",  # Indigo-100 (smooth, visible)
+    "bot_bubble": "#bae6fd"    # Sky-100
 }
 
 if "theme" not in st.session_state:
@@ -72,6 +76,19 @@ st.markdown(
         background: {theme['button_hover']};
         color: {theme['button_text']} !important;
         transform: translateY(-1px);
+    }}
+    /* Chat bubbles */
+    .stChatMessage.user {{
+        background-color: {theme['user_bubble']} !important;
+        border-radius: 12px;
+        padding: 8px 12px;
+        margin: 4px 0;
+    }}
+    .stChatMessage.assistant {{
+        background-color: {theme['bot_bubble']} !important;
+        border-radius: 12px;
+        padding: 8px 12px;
+        margin: 4px 0;
     }}
     </style>
     """,
