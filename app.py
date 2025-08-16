@@ -14,27 +14,29 @@ profanity.load_censor_words()
 
 # -------------------- Theme Config --------------------
 DARK_MODE = {
-    "bg": "#0f172a",        # Slate-900
-    "text": "#e0f2fe",      # Sky-100
-    "header": "#4F46E5",    # Indigo
+    "bg": "#0f172a",
+    "text": "#e0f2fe",
+    "header": "#4F46E5",
     "button": "linear-gradient(90deg, #4F46E5, #06B6D4)",
     "button_hover": "linear-gradient(90deg, #06B6D4, #4F46E5)",
-    "button_text": "#a3e635",  # Lime
-    "user_bubble": "#1e40af",  # Indigo-800
-    "bot_bubble": "#0891b2",   # Cyan-700
-    "bubble_text": "#e0f2fe"   # Keep light text in dark mode
+    "button_text": "#a3e635",
+    "user_bubble": "#1e40af",
+    "bot_bubble": "#0891b2",
+    "bubble_text": "#e0f2fe",
+    "divider": "#334155"  # Dark mode divider
 }
 
 LIGHT_MODE = {
-    "bg": "#B0C4DE",        # Light Steel Blue
-    "text": "#000000",      # Black
-    "header": "#2563eb",    # Blue
+    "bg": "#6495ED",
+    "text": "#000000",
+    "header": "#2563eb",
     "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",
     "button_hover": "linear-gradient(90deg, #06b6d4, #3b82f6)",
     "button_text": "#111827",
-    "user_bubble": "#dbeafe",  # Indigo-100
-    "bot_bubble": "#e0f2fe",   # Sky-100
-    "bubble_text": "#000000"   # Force black text in bubbles
+    "user_bubble": "#dbeafe",
+    "bot_bubble": "#e0f2fe",
+    "bubble_text": "#000000",
+    "divider": "#000000"  # Light mode divider = black
 }
 
 if "theme" not in st.session_state:
@@ -42,8 +44,6 @@ if "theme" not in st.session_state:
 
 # -------------------- Sidebar --------------------
 st.sidebar.title("⚙️ Controls")
-
-# 🌙 / ☀️ Toggle Switch
 dark_mode_toggle = st.sidebar.toggle("🌙 Dark Mode", value=(st.session_state.theme == "dark"))
 st.session_state.theme = "dark" if dark_mode_toggle else "light"
 theme = DARK_MODE if st.session_state.theme == "dark" else LIGHT_MODE
@@ -100,6 +100,11 @@ st.markdown(
         padding: 8px 12px;
         margin: 4px 0;
     }}
+    /* Divider below greeting text */
+    .custom-divider {{
+        border-top: 2px solid {theme['divider']};
+        margin: 10px 0;
+    }}
     </style>
     """,
     unsafe_allow_html=True,
@@ -144,7 +149,9 @@ if st.session_state.username:
     st.markdown(f"<p style='text-align:center;'>👋 Hello, {st.session_state.username}! I'm your friendly SRM guide.</p>", unsafe_allow_html=True)
 else:
     st.markdown("<p style='text-align:center;'>Your friendly SRM guide for everything university-related</p>", unsafe_allow_html=True)
-st.divider()
+
+# Custom divider line with dynamic color
+st.markdown(f"<div class='custom-divider'></div>", unsafe_allow_html=True)
 
 # -------------------- Init Chat --------------------
 if "messages" not in st.session_state:
