@@ -25,7 +25,7 @@ DARK_MODE = {
 }
 
 LIGHT_MODE = {
-    "bg": "#6495ED",  # Cornflower Blue
+    "bg": "#B0C4DE", #Light steel Blue
     "text": "#000000",  # Black text
     "header": "#2563eb",  # Blue
     "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",
