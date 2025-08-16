@@ -4,13 +4,12 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
+# -------------------- Load API Key --------------------
 load_dotenv()
-# Configure Gemini AI
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-# Load profanity filter
+# -------------------- Profanity Filter --------------------
 profanity.load_censor_words()
 
 # -------------------- Theme Config --------------------
@@ -18,7 +17,7 @@ DARK_MODE = {
     "bg": "#0f172a",  # Slate-900
     "text": "#e0f2fe",  # Sky-100
     "header": "#4F46E5",  # Indigo
-    "button": "linear-gradient(90deg, #4F46E5, #06B6D4)",
+    "button": "linear-gradient(90deg, #4F46E5, #06B6D4)",  # Indigo → Cyan
     "button_hover": "linear-gradient(90deg, #06B6D4, #4F46E5)",
     "button_text": "#a3e635"  # Lime
 }
@@ -27,13 +26,14 @@ LIGHT_MODE = {
     "bg": "#f9fafb",  # Gray-50
     "text": "#1f2937",  # Gray-800
     "header": "#2563eb",  # Blue
-    "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",
+    "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",  # Blue → Cyan
     "button_hover": "linear-gradient(90deg, #06b6d4, #3b82f6)",
     "button_text": "#111827"  # Gray-900
 }
 
 if "theme" not in st.session_state:
     st.session_state.theme = "dark"
+
 theme = DARK_MODE if st.session_state.theme == "dark" else LIGHT_MODE
 
 # -------------------- Streamlit Page Config --------------------
@@ -81,10 +81,10 @@ st.markdown(
 # -------------------- Sidebar --------------------
 st.sidebar.title("⚙️ Controls")
 
-# Theme toggle
-if st.sidebar.button("🌗 Toggle Dark/Light Mode"):
-    st.session_state.theme = "light" if st.session_state.theme == "dark" else "dark"
-    st.rerun()
+# 🌙 / ☀️ Toggle Switch
+dark_mode_toggle = st.sidebar.toggle("🌙 Dark Mode", value=(st.session_state.theme == "dark"))
+st.session_state.theme = "dark" if dark_mode_toggle else "light"
+theme = DARK_MODE if st.session_state.theme == "dark" else LIGHT_MODE
 
 # User Profile
 if "username" not in st.session_state:
