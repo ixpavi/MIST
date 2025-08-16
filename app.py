@@ -16,6 +16,69 @@ profanity.load_censor_words()
 # Streamlit page configuration
 st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layout="centered")
 
+# 🎨 Custom SRM Theme (Option 1: Maroon + Gold + Blue)
+custom_css = """
+<style>
+/* General background */
+body, .stApp {
+    background-color: #F9F9F9;
+    color: #333333;
+}
+
+/* Title */
+h1 {
+    color: #800000 !important; /* Maroon */
+    font-weight: bold;
+}
+
+/* Subtext */
+p {
+    color: #333333;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #FFF8F0; /* very light maroon tint */
+}
+
+/* Sidebar title */
+.sidebar .sidebar-content {
+    color: #800000;
+    font-weight: bold;
+}
+
+/* Buttons */
+div.stButton > button {
+    background-color: #800000;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 0.6em 1em;
+    font-weight: 500;
+    transition: 0.3s;
+}
+div.stButton > button:hover {
+    background-color: #FFD700; /* Gold */
+    color: #1E3A8A; /* Blue text on hover */
+}
+
+/* Chat messages */
+.stChatMessage.user {
+    background-color: #FFD70020; /* Light gold tint */
+    border-left: 4px solid #FFD700;
+    border-radius: 8px;
+    padding: 0.5em;
+}
+.stChatMessage.assistant {
+    background-color: #1E3A8A20; /* Light blue tint */
+    border-left: 4px solid #1E3A8A;
+    border-radius: 8px;
+    padding: 0.5em;
+}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
 # Sidebar with buttons
 st.sidebar.title("⚙️ Controls")
 
@@ -57,7 +120,7 @@ if st.sidebar.button("❓ Help"):
     st.sidebar.warning("Type your queries in the chat box. I will answer in the SRM context.")
 
 # SRM Header
-st.markdown("<h1 style='text-align:center; color:#800000;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center;'>🎓 MIST AI - SRM Virtual Assistant</h1>", unsafe_allow_html=True)
 if st.session_state.username:
     st.markdown(f"<p style='text-align:center;'>👋 Hello, {st.session_state.username}! I'm your friendly SRM guide.</p>", unsafe_allow_html=True)
 else:
