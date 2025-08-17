@@ -52,48 +52,15 @@ st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layou
 # -------------------- Sidebar --------------------
 st.sidebar.title("⚙️ Controls")
 
-# -------------------- Sun/Moon Circular Toggle in Sidebar --------------------
-# Hidden button to toggle theme
-if st.sidebar.button("Toggle Theme", key="toggle_theme_button"):
-    st.session_state.theme = "light" if dark_mode else "dark"
+# -------------------- Sun/Moon Toggle in Sidebar --------------------
+if hasattr(st.sidebar, "toggle"):
+    new_dark_mode = st.sidebar.toggle("🌙" if dark_mode else "☀️", value=dark_mode, key="dark_mode_toggle")
+else:
+    new_dark_mode = st.sidebar.checkbox("🌙" if dark_mode else "☀️", value=dark_mode, key="dark_mode_toggle")
 
-# Circular toggle HTML + CSS
-toggle_html = f"""
-<style>
-.toggle-container {{
-  width: 60px;
-  height: 30px;
-  border-radius: 30px;
-  background: linear-gradient(90deg, #ffd700, #4f46e5);
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 3px;
-  margin: 10px auto;
-}}
-.toggle-circle {{
-  width: 24px;
-  height: 24px;
-  background: #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 3px;
-  left: {'33px' if dark_mode else '3px'};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  transition: left 0.3s ease;
-}}
-</style>
-
-<div class="toggle-container" onclick="document.querySelector('button[key=toggle_theme_button]').click()">
-  <div class="toggle-circle">{'🌙' if dark_mode else '☀️'}</div>
-</div>
-"""
-
-st.sidebar.markdown(toggle_html, unsafe_allow_html=True)
+if new_dark_mode != dark_mode:
+    st.session_state.theme = "dark" if new_dark_mode else "light"
+    st.rerun()
 
 # -------------------- Custom CSS --------------------
 st.markdown(
@@ -156,6 +123,12 @@ if "username" not in st.session_state:
     st.session_state.username = ""
 st.session_state.username = st.sidebar.text_input("👤 Enter your name", st.session_state.username)
 
+campus_options = ["Any campus", "Kattankulathur (KTR)", "Vadapalani", "Ramapuram", "Delhi NCR", "Sonepat", "Amaravati"]
+st.session_state.campus = st.sidebar.selectbox("🏫 Campus (optional)", campus_options, index=0, key="campus_select")
+
+focus_options = ["General", "Admissions", "Academics", "Hostel", "Fees", "Placements", "Events"]
+st.session_state.focus = st.sidebar.selectbox("🎯 Focus (optional)", focus_options, index=0, key="focus_select")
+
 # Clear Chat
 if st.sidebar.button("🗑️ Clear Chat"):
     st.session_state.messages = []
@@ -193,6 +166,20 @@ else:
 
 st.markdown(f"<div class='custom-divider'></div>", unsafe_allow_html=True)
 
+# -------------------- Suggestions --------------------
+suggestions = [
+    "Admissions process and deadlines",
+    "Top engineering programs at SRM",
+    "Hostel facilities and fees",
+    "Clubs and events this month"
+]
+cols = st.columns(len(suggestions))
+for idx, col in enumerate(cols):
+    with col:
+        if st.button(suggestions[idx], key=f"suggestion_{idx}"):
+            st.session_state.suggested_query = suggestions[idx]
+            st.rerun()
+
 # -------------------- Init Chat --------------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -208,10 +195,12 @@ def get_srm_response(query):
         CONTEXT: SRM is a leading private university in India with main campus in Kattankulathur, Chennai, and other campuses in Vadapalani, Ramapuram, Delhi NCR, Sonepat, and Amaravati. Known for engineering, medicine, management, law, and research programs.
 
         The user chatting with you is named: {st.session_state.username if st.session_state.username else "Student"}.
+        Preferred campus: {st.session_state.get('campus', 'Any campus')}.
+        Preferred focus: {st.session_state.get('focus', 'General')}.
 
         Question: {query}
 
-        Provide a helpful SRM-focused response and address the user by name if available:
+        Provide a helpful SRM-focused response. If a campus or focus is given, tailor the answer accordingly and address the user by name if available. Keep it concise with bullets when useful:
         """
         response = model.generate_content(prompt)
         return response.text if response.text else "I couldn't generate a response. Please try again!"
@@ -220,15 +209,17 @@ def get_srm_response(query):
 
 # -------------------- Chat Display --------------------
 for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
+    with st.chat_message(msg["role"], avatar="👤" if msg["role"] == "user" else "🎓"):
         st.write(msg["content"])
 
 # -------------------- Chat Input --------------------
-query = st.chat_input("Ask me anything about SRM or any topic...")
+query = st.session_state.pop("suggested_query", None)
+if query is None:
+    query = st.chat_input("Ask me anything about SRM or any topic...", key="chat_input")
 
 if query:
     st.session_state.messages.append({"role": "user", "content": query})
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar="👤"):
         st.write(query)
 
     # Bot Logic
@@ -250,7 +241,7 @@ if query:
                 st.session_state.response_cache[cache_key] = bot_reply
 
     st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar="🎓"):
         st.write(bot_reply)
 
 # -------------------- Footer --------------------
