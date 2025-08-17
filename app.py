@@ -69,6 +69,25 @@ st.markdown(
         background: linear-gradient(135deg, {theme['bg']} 0%, {theme['main_bg']} 100%);
         color: {theme['text']};
         min-height: 100vh;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    /* Remove top spacing from main containers */
+    .main {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    .block-container {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    /* Remove Streamlit default top spacing */
+    .stApp > div {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
     }}
     
     /* Enhanced Sidebar Styling */
@@ -246,8 +265,8 @@ st.markdown(
     }}
     
     .stChatMessage.user {{
-        background: linear-gradient(135deg, {theme['user_bubble']} 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
-        color: {theme['bubble_text']} !important;
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
         margin-left: 20% !important;
         margin-right: 5% !important;
         border: 2px solid rgba(176, 196, 222, 0.4) !important;
@@ -285,8 +304,8 @@ st.markdown(
     }}
     
     .stChatMessage.assistant {{
-        background: linear-gradient(135deg, {theme['bot_bubble']} 0%, #3a4a5a 50%, #2d3748 100%) !important;
-        color: {theme['bubble_text']} !important;
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
         margin-right: 20% !important;
         margin-left: 5% !important;
         border: 2px solid rgba(45, 55, 72, 0.4) !important;
@@ -567,7 +586,7 @@ st.markdown(
         max-width: 100% !important;
         padding-left: 2rem !important;
         padding-right: 2rem !important;
-        padding-top: 1rem !important;
+        padding-top: 0.1rem !important;
     }}
     
     /* When sidebar is collapsed, use even more space */
@@ -585,7 +604,7 @@ st.markdown(
         font-size: 4rem !important;
         font-weight: 800 !important;
         text-align: center;
-        margin: 1rem 0 1.5rem 0 !important;
+        margin: 0.1rem 0 0.5rem 0 !important;
         text-shadow: 0 6px 12px rgba(0,0,0,0.2);
         letter-spacing: -0.02em !important;
     }}
@@ -700,19 +719,7 @@ st.markdown(
         background: linear-gradient(135deg, #B9D9EB 0%, #F0F8FF 25%, #B9D9EB 50%, #F0F8FF 75%, #B9D9EB 100%) !important;
     }}
     
-    .stApp[data-theme="light"] .stChatMessage.user {{
-        background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 50%, #2563EB 100%) !important;
-        color: white !important;
-        border: 2px solid rgba(30, 58, 138, 0.4) !important;
-        box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3) !important;
-    }}
-    
-    .stApp[data-theme="light"] .stChatMessage.assistant {{
-        background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%) !important;
-        color: white !important;
-        border: 2px solid rgba(15, 23, 42, 0.4) !important;
-        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3) !important;
-    }}
+
     
     /* Light theme textbox styling */
     .stApp[data-theme="light"] .stTextInput > div > div > input {{
@@ -824,70 +831,225 @@ st.markdown(
         color: black !important;
     }}
     
-    /* Light theme chat bubbles - both user and assistant */
-    .stApp[data-theme="light"] .stChatMessage.user {{
-        background: linear-gradient(135deg, #E5E7EB 0%, #F3F4F6 50%, #FFFFFF 100%) !important;
-        color: #1F2937 !important;
-        border: 2px solid rgba(209, 213, 219, 0.4) !important;
-        box-shadow: 0 6px 20px rgba(156, 163, 175, 0.3) !important;
+    /* Force dark mode chat bubble colors for BOTH themes */
+    .stChatMessage.user {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+        border: 2px solid rgba(176, 196, 222, 0.4) !important;
+        box-shadow: 0 8px 25px rgba(176, 196, 222, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     }}
     
-    .stApp[data-theme="light"] .stChatMessage.assistant {{
-        background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 50%, #E5E7EB 100%) !important;
-        color: #1F2937 !important;
-        border: 2px solid rgba(209, 213, 219, 0.4) !important;
-        box-shadow: 0 6px 20px rgba(156, 163, 175, 0.3) !important;
+    .stChatMessage.assistant {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+        border: 2px solid rgba(45, 55, 72, 0.4) !important;
+        box-shadow: 0 8px 25px rgba(45, 55, 72, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
     }}
     
-    /* Chat bubble text styling - specific to chat messages only */
-    .stApp[data-theme="light"] .stChatMessage .stChatMessageContent {{
-        color: #1F2937 !important;
+
+    
+    /* Chat bubble text styling - force dark mode colors for BOTH themes */
+    .stChatMessage .stChatMessageContent {{
+        color: #B9D9EB !important;
         font-weight: 500 !important;
         text-shadow: none !important;
     }}
     
-    .stApp[data-theme="light"] .stChatMessage.user .stChatMessageContent {{
-        color: #1F2937 !important;
+    .stChatMessage.user .stChatMessageContent {{
+        color: #B9D9EB !important;
         font-weight: 600 !important;
         text-shadow: none !important;
     }}
     
-    .stApp[data-theme="light"] .stChatMessage.assistant .stChatMessageContent {{
-        color: #1F2937 !important;
+    .stChatMessage.assistant .stChatMessageContent {{
+        color: #B9D9EB !important;
         font-weight: 500 !important;
         text-shadow: none !important;
     }}
     
-    /* Ensure chat message text is always dark gray and readable */
-    .stApp[data-theme="light"] .stChatMessage p {{
-        color: #1F2937 !important;
+    /* Ensure chat message text is always light blue and readable */
+    .stChatMessage p {{
+        color: #B9D9EB !important;
         font-weight: 500 !important;
     }}
     
-    .stApp[data-theme="light"] .stChatMessage div {{
-        color: #1F2937 !important;
+    .stChatMessage div {{
+        color: #B9D9EB !important;
     }}
     
-    /* AGGRESSIVE OVERRIDE - Force all chat text to be dark in light theme */
+    /* FORCE DARK THEME CHAT BUBBLE COLORS FOR LIGHT THEME */
+    .stApp[data-theme="light"] .stChatMessage.user {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+        border: 2px solid rgba(176, 196, 222, 0.4) !important;
+        box-shadow: 0 8px 25px rgba(176, 196, 222, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.assistant {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+        border: 2px solid rgba(45, 55, 72, 0.4) !important;
+        box-shadow: 0 8px 25px rgba(45, 55, 72, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }}
+    
+    /* FORCE DARK THEME TEXT COLORS FOR LIGHT THEME */
+    .stApp[data-theme="light"] .stChatMessage .stChatMessageContent {{
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.user .stChatMessageContent {{
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.assistant .stChatMessageContent {{
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage p {{
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage div {{
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage * {{
+        color: #B9D9EB !important;
+    }}
+    
+    /* ULTIMATE FORCE - Override ALL possible light theme chat bubble styling */
+    .stApp[data-theme="light"] [data-testid="stChatMessage"] {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].user {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].assistant {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    /* Force every possible element in light theme chat bubbles */
+    .stApp[data-theme="light"] [data-testid="stChatMessage"] *,
+    .stApp[data-theme="light"] [data-testid="stChatMessageContent"] *,
+    .stApp[data-theme="light"] .stChatMessage *,
+    .stApp[data-theme="light"] .stChatMessageContent * {{
+        color: #B9D9EB !important;
+    }}
+    
+    /* Override any Streamlit-generated CSS */
+    .stApp[data-theme="light"] div[class*="chat"] {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] div[class*="Chat"] {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    /* ULTIMATE FORCE - Override ALL possible light theme chat bubble styling */
+    .stApp[data-theme="light"] [data-testid="stChatMessage"] {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].user {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].assistant {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    /* Force ALL elements in light theme chat messages */
+    .stApp[data-theme="light"] [data-testid="stChatMessage"] *,
+    .stApp[data-theme="light"] [data-testid="stChatMessageContent"] *,
+    .stApp[data-theme="light"] .stChatMessage *,
+    .stApp[data-theme="light"] .stChatMessageContent * {{
+        color: #B9D9EB !important;
+    }}
+    
+    /* Override any Streamlit-generated CSS */
+    .stApp[data-theme="light"] div[class*="chat"] {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] div[class*="chat"].assistant {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    /* FINAL ULTIMATE OVERRIDE - Force dark theme colors for light theme */
+    .stApp[data-theme="light"] * {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
     .stApp[data-theme="light"] .stChatMessage,
     .stApp[data-theme="light"] .stChatMessage *,
-    .stApp[data-theme="light"] .stChatMessageContent,
-    .stApp[data-theme="light"] .stChatMessageContent *,
-    .stApp[data-theme="light"] [data-testid="stChatMessageContent"],
-    .stApp[data-theme="light"] [data-testid="stChatMessageContent"] * {{
-        color: #1F2937 !important;
-        color: #000000 !important;
+    .stApp[data-theme="light"] [data-testid="stChatMessage"],
+    .stApp[data-theme="light"] [data-testid="stChatMessage"] * {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
     }}
     
-    /* Force specific text elements */
-    .stApp[data-theme="light"] .stChatMessage p,
-    .stApp[data-theme="light"] .stChatMessage span,
-    .stApp[data-theme="light"] .stChatMessage div,
-    .stApp[data-theme="light"] .stChatMessage strong,
-    .stApp[data-theme="light"] .stChatMessage em {{
-        color: #000000 !important;
-        color: #1F2937 !important;
+    .stApp[data-theme="light"] .stChatMessage.assistant,
+    .stApp[data-theme="light"] .stChatMessage.assistant *,
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].assistant,
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].assistant * {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
     }}
+    
+    /* ULTIMATE FORCE - Override everything for light theme chat bubbles */
+    .stApp[data-theme="light"] [data-testid="stChatMessage"] {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].user {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] [data-testid="stChatMessage"].assistant {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    /* Force all possible chat message selectors */
+    .stApp[data-theme="light"] div[class*="stChatMessage"] {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] div[class*="stChatMessage"].user {{
+        background: linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    .stApp[data-theme="light"] div[class*="stChatMessage"].assistant {{
+        background: linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important;
+        color: #B9D9EB !important;
+    }}
+    
+    /* Force text color for all elements */
+    .stApp[data-theme="light"] [data-testid="stChatMessage"] *,
+    .stApp[data-theme="light"] div[class*="stChatMessage"] * {{
+        color: #B9D9EB !important;
+    }}
+    
+
+    
+
     
     </style>
     """,
@@ -951,6 +1113,46 @@ st.components.v1.html(
     // Run after Streamlit updates
     const observer = new MutationObserver(addCopyButtons);
     observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Force dark theme chat bubble colors for light theme
+    function forceDarkChatColors() {
+        const chatMessages = document.querySelectorAll('.stChatMessage');
+        chatMessages.forEach((message) => {
+            if (message.classList.contains('user')) {
+                message.style.background = 'linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%) !important';
+                message.style.color = '#B9D9EB !important';
+                message.style.setProperty('background', 'linear-gradient(135deg, #B0C4DE 0%, #A8C0E0 50%, #B8CCE8 100%)', 'important');
+                message.style.setProperty('color', '#B9D9EB', 'important');
+            } else if (message.classList.contains('assistant')) {
+                message.style.background = 'linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%) !important';
+                message.style.color = '#B9D9EB !important';
+                message.style.setProperty('background', 'linear-gradient(135deg, #2d3748 0%, #3a4a5a 50%, #2d3748 100%)', 'important');
+                message.style.setProperty('color', '#B9D9EB', 'important');
+            }
+            
+            // Force text color for all child elements
+            const textElements = message.querySelectorAll('*');
+            textElements.forEach((element) => {
+                element.style.color = '#B9D9EB !important';
+                element.style.setProperty('color', '#B9D9EB', 'important');
+            });
+        });
+        
+        // Also force colors for any elements with chat-related classes
+        const allElements = document.querySelectorAll('*');
+        allElements.forEach((element) => {
+            if (element.className && (element.className.includes('chat') || element.className.includes('Chat'))) {
+                element.style.setProperty('color', '#B9D9EB', 'important');
+            }
+        });
+    }
+    
+    // Run color forcing function
+    forceDarkChatColors();
+    
+    // Run color forcing after Streamlit updates
+    const colorObserver = new MutationObserver(forceDarkChatColors);
+    colorObserver.observe(document.body, { childList: true, subtree: true });
     </script>
     """,
     height=0,
