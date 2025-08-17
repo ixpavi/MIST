@@ -23,11 +23,11 @@ DARK_MODE = {
     "user_bubble": "#1e40af",
     "bot_bubble": "#0891b2",
     "bubble_text": "#e0f2fe",
-    "divider": "#334155"  # Dark mode divider
+    "divider": "#334155"
 }
 
 LIGHT_MODE = {
-    "bg": "#B0C4DE", #Light steel blue
+    "bg": "#B0C4DE",
     "text": "#000000",
     "header": "#2563eb",
     "button": "linear-gradient(90deg, #3b82f6, #06b6d4)",
@@ -36,20 +36,64 @@ LIGHT_MODE = {
     "user_bubble": "#dbeafe",
     "bot_bubble": "#e0f2fe",
     "bubble_text": "#000000",
-    "divider": "#000000"  # Light mode divider = black
+    "divider": "#000000"
 }
 
+# -------------------- Initialize Theme --------------------
 if "theme" not in st.session_state:
     st.session_state.theme = "dark"
 
-# -------------------- Sidebar --------------------
-st.sidebar.title("⚙️ Controls")
-dark_mode_toggle = st.sidebar.toggle("🌙 Dark Mode", value=(st.session_state.theme == "dark"))
-st.session_state.theme = "dark" if dark_mode_toggle else "light"
 theme = DARK_MODE if st.session_state.theme == "dark" else LIGHT_MODE
+dark_mode = st.session_state.theme == "dark"
 
 # -------------------- Page Config --------------------
 st.set_page_config(page_title="MIST AI - SRM Assistant", page_icon="🎓", layout="centered")
+
+# -------------------- Sidebar --------------------
+st.sidebar.title("⚙️ Controls")
+
+# -------------------- Sun/Moon Circular Toggle in Sidebar --------------------
+# Hidden button to toggle theme
+if st.sidebar.button("Toggle Theme", key="toggle_theme_button"):
+    st.session_state.theme = "light" if dark_mode else "dark"
+
+# Circular toggle HTML + CSS
+toggle_html = f"""
+<style>
+.toggle-container {{
+  width: 60px;
+  height: 30px;
+  border-radius: 30px;
+  background: linear-gradient(90deg, #ffd700, #4f46e5);
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  margin: 10px auto;
+}}
+.toggle-circle {{
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: {'33px' if dark_mode else '3px'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: left 0.3s ease;
+}}
+</style>
+
+<div class="toggle-container" onclick="document.querySelector('button[key=toggle_theme_button]').click()">
+  <div class="toggle-circle">{'🌙' if dark_mode else '☀️'}</div>
+</div>
+"""
+
+st.sidebar.markdown(toggle_html, unsafe_allow_html=True)
 
 # -------------------- Custom CSS --------------------
 st.markdown(
@@ -62,7 +106,6 @@ st.markdown(
     h1 {{
         color: {theme['header']} !important;
     }}
-    /* Generic buttons */
     div.stButton > button,
     div.stDownloadButton > button,
     div[data-testid="stSidebar"] div.stButton > button,
@@ -85,7 +128,6 @@ st.markdown(
         color: {theme['button_text']} !important;
         transform: translateY(-1px);
     }}
-    /* Chat bubbles */
     .stChatMessage.user {{
         background-color: {theme['user_bubble']} !important;
         color: {theme['bubble_text']} !important;
@@ -100,7 +142,6 @@ st.markdown(
         padding: 8px 12px;
         margin: 4px 0;
     }}
-    /* Divider below greeting text */
     .custom-divider {{
         border-top: 2px solid {theme['divider']};
         margin: 10px 0;
@@ -150,7 +191,6 @@ if st.session_state.username:
 else:
     st.markdown("<p style='text-align:center;'>Your friendly SRM guide for everything university-related</p>", unsafe_allow_html=True)
 
-# Custom divider line with dynamic color
 st.markdown(f"<div class='custom-divider'></div>", unsafe_allow_html=True)
 
 # -------------------- Init Chat --------------------
@@ -214,6 +254,5 @@ if query:
         st.write(bot_reply)
 
 # -------------------- Footer --------------------
-# Custom divider above footer
 st.markdown(f"<div class='custom-divider'></div>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; font-size:12px;'>MIST AI - Powered by Google Gemini | Built for SRM Community</p>", unsafe_allow_html=True)
