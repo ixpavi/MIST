@@ -695,84 +695,126 @@ st.markdown(
         box-shadow: 0 6px 16px rgba(0,0,0,0.3) !important;
     }}
     
-    /* =========================
-   Enhanced Light Theme CSS
-   ========================= */
-
-/* App background */
-.stApp[data-theme="light"] {
-    background: linear-gradient(
-        135deg,
-        #B9D9EB 0%,
-        #F0F8FF 25%,
-        #B9D9EB 50%,
-        #F0F8FF 75%,
-        #B9D9EB 100%
-    ) !important;
-}
-
-/* =========================
-   Chat Bubbles
-   ========================= */
-
-/* User bubble */
-.stApp[data-theme="light"] .stChatMessage.user {
-    background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 50%, #2563EB 100%) !important;
-    color: white !important;
-    border: 2px solid rgba(30, 58, 138, 0.4) !important;
-    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3) !important;
-    font-weight: 600 !important;
-}
-
-/* Assistant bubble */
-.stApp[data-theme="light"] .stChatMessage.assistant {
-    background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%) !important;
-    color: white !important;
-    border: 2px solid rgba(15, 23, 42, 0.4) !important;
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3) !important;
-    font-weight: 500 !important;
-}
-
-/* Chat bubble text content */
-.stApp[data-theme="light"] .stChatMessage .stChatMessageContent {
-    text-shadow: none !important;
-}
-
-/* =========================
-   Chat Input Styling
-   ========================= */
-.stApp[data-theme="light"] div[data-testid="stChatInput"] {
-    background-color: white !important;
-}
-
-.stApp[data-theme="light"] div[data-testid="stChatInput"] textarea {
-    background-color: white !important;
-    color: black !important;
-}
-
-.stApp[data-theme="light"] div[data-testid="stChatInput"] textarea::placeholder {
-    color: #6B7280 !important; /* gray placeholder */
-    opacity: 1 !important;
-}
-
-/* =========================
-   Other Inputs (Text / Selectbox)
-   ========================= */
-.stApp[data-theme="light"] .stTextInput > div > div > input {
-    background-color: black !important;
-    color: white !important;
-}
-
-.stApp[data-theme="light"] .stSelectbox > div > div > select {
-    color: white !important;
-}
-
-/* =========================
-   Headings
-   ========================= */
-.stApp[data-theme="light"] h3 {
-    color: black !important;
-}
+    /* Enhanced Light Theme Styling */
+    .stApp[data-theme="light"] {{
+        background: linear-gradient(135deg, #B9D9EB 0%, #F0F8FF 25%, #B9D9EB 50%, #F0F8FF 75%, #B9D9EB 100%) !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.user {{
+        background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 50%, #2563EB 100%) !important;
+        color: white !important;
+        border: 2px solid rgba(30, 58, 138, 0.4) !important;
+        box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3) !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.assistant {{
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%) !important;
+        color: white !important;
+        border: 2px solid rgba(15, 23, 42, 0.4) !important;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3) !important;
+    }}
+    
+    /* Light theme textbox styling */
+    .stApp[data-theme="light"] .stTextInput > div > div > input {{
+        color: white !important;
+        background-color: black !important;
+    }}
+    
+    .stApp[data-theme="light"] .stSelectbox > div > div > select {{
+        color: white !important;
+    }}
+    
+    /* Ensure chat input is always white */
+    .stApp[data-theme="light"] div[data-testid="stChatInput"] {{
+        background-color: white !important;
+    }}
+    
+    .stApp[data-theme="light"] div[data-testid="stChatInput"] textarea {{
+        background-color: white !important;
+        color: black !important;
+    }}
+    
+    .stApp[data-theme="light"] div[data-testid="stChatInput"] > div {{
+        background-color: white !important;
+    }}
+    
+    .stApp[data-theme="light"] div[data-testid="stChatInput"] form {{
+        background-color: white !important;
+    }}
+    
+    .stApp[data-theme="light"] div[data-testid="stChatInput"] .stChatInputRow {{
+        background-color: white !important;
+    }}
+    
+    /* Light theme headings - Quick Suggestions and Chat */
+    .stApp[data-theme="light"] h3 {{
+        color: black !important;
+    }}
+    
+    /* Light theme chat bubbles - both user and assistant */
+    .stApp[data-theme="light"] .stChatMessage.user {{
+        background: linear-gradient(135deg, #E5E7EB 0%, #F3F4F6 50%, #FFFFFF 100%) !important;
+        color: #1F2937 !important;
+        border: 2px solid rgba(209, 213, 219, 0.4) !important;
+        box-shadow: 0 6px 20px rgba(156, 163, 175, 0.3) !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.assistant {{
+        background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 50%, #E5E7EB 100%) !important;
+        color: #1F2937 !important;
+        border: 2px solid rgba(209, 213, 219, 0.4) !important;
+        box-shadow: 0 6px 20px rgba(156, 163, 175, 0.3) !important;
+    }}
+    
+    /* Chat bubble text styling - specific to chat messages only */
+    .stApp[data-theme="light"] .stChatMessage .stChatMessageContent {{
+        color: #1F2937 !important;
+        font-weight: 500 !important;
+        text-shadow: none !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.user .stChatMessageContent {{
+        color: #1F2937 !important;
+        font-weight: 600 !important;
+        text-shadow: none !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage.assistant .stChatMessageContent {{
+        color: #1F2937 !important;
+        font-weight: 500 !important;
+        text-shadow: none !important;
+    }}
+    
+    /* Ensure chat message text is always dark gray and readable */
+    .stApp[data-theme="light"] .stChatMessage p {{
+        color: #1F2937 !important;
+        font-weight: 500 !important;
+    }}
+    
+    .stApp[data-theme="light"] .stChatMessage div {{
+        color: #1F2937 !important;
+    }}
+    
+    /* AGGRESSIVE OVERRIDE - Force all chat text to be dark in light theme */
+    .stApp[data-theme="light"] .stChatMessage,
+    .stApp[data-theme="light"] .stChatMessage *,
+    .stApp[data-theme="light"] .stChatMessageContent,
+    .stApp[data-theme="light"] .stChatMessageContent *,
+    .stApp[data-theme="light"] [data-testid="stChatMessageContent"],
+    .stApp[data-theme="light"] [data-testid="stChatMessageContent"] * {{
+        color: #1F2937 !important;
+        color: #000000 !important;
+    }}
+    
+    /* Force specific text elements */
+    .stApp[data-theme="light"] .stChatMessage p,
+    .stApp[data-theme="light"] .stChatMessage span,
+    .stApp[data-theme="light"] .stChatMessage div,
+    .stApp[data-theme="light"] .stChatMessage strong,
+    .stApp[data-theme="light"] .stChatMessage em {{
+        color: #000000 !important;
+        color: #1F2937 !important;
+    }}
 
     
     </style>
