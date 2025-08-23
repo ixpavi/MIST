@@ -130,18 +130,14 @@ def execute_many_insert(query, values):
         cur.close()
         conn.close()
 
-def copy_via_csv(table_name, csv_file):
-    """Bulk insert CSV into DB using COPY."""
-    conn = get_connection()
-    cur = conn.cursor()
-    try:
-        # read uploaded file into memory
-        file_data = io.StringIO(csv_file.getvalue().decode("utf-8"))
-        cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV HEADER", file_data)
-        conn.commit()
-    except Exception as e:
-        conn.rollback()
-        raise e
-    finally:
-        cur.close()
-        conn.close()
+def copy_via_csv(df, table_name, conn):
+    # Create an in-memory CSV buffer
+    buffer = io.StringIO()
+    # Save DataFrame as CSV inside buffer
+    df.to_csv(buffer, index=False, header=False)  # header=False since table already has column names
+    buffer.seek(0)  # reset pointer to beginning
+
+    # Copy into Postgres
+    with conn.cursor() as cur:
+        cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV", buffer)
+    conn.commit()
