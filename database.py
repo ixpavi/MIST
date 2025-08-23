@@ -1,4 +1,4 @@
-import mysql.connector
+import psycopg2
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -7,15 +7,18 @@ import json
 import faiss
 
 load_dotenv()
+
+# Configure Gemini
 if os.getenv("GEMINI_API_KEY"):
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def get_connection():
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASS", ""),
-        database=os.getenv("DB_NAME", "mist_ai")
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASS"),
+        dbname=os.getenv("DB_NAME")
     )
 
 def get_embedding(text):
@@ -36,27 +39,29 @@ def add_qa_pair(question, answer):
 
 def _load_index():
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("SELECT id, answer, embedding FROM qa_pairs WHERE embedding IS NOT NULL AND embedding <> ''")
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    vecs = []
-    answers = []
+
+    vecs, answers = [], []
     for row in rows:
         try:
-            v = np.array(json.loads(row["embedding"]), dtype="float32")
+            v = np.array(json.loads(row[2]), dtype="float32")
             if v.ndim != 1:
                 continue
             n = np.linalg.norm(v)
             if n == 0:
                 continue
             vecs.append(v / n)
-            answers.append(row["answer"])
+            answers.append(row[1])
         except:
             continue
+
     if not vecs:
         return None, None
+
     dim = vecs[0].shape[0]
     index = faiss.IndexFlatIP(dim)
     index.add(np.vstack(vecs).astype("float32"))
@@ -74,24 +79,25 @@ def get_answer_from_db(question):
             pos = int(idxs[0][0])
             if score >= 0.80:
                 return answers[pos]
+
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("SELECT answer FROM qa_pairs WHERE LOWER(question) LIKE LOWER(%s) LIMIT 1", ("%" + question + "%",))
     row = cursor.fetchone()
     cursor.close()
     conn.close()
-    return row["answer"] if row else None
+    return row[0] if row else None
 
 def backfill_embeddings(batch_size=50):
     conn = get_connection()
-    c = conn.cursor(dictionary=True)
+    c = conn.cursor()
     c.execute("SELECT id, question FROM qa_pairs WHERE embedding IS NULL OR embedding = ''")
     rows = c.fetchall()
     u = conn.cursor()
     i = 0
     for row in rows:
-        emb = json.dumps(get_embedding(row["question"]))
-        u.execute("UPDATE qa_pairs SET embedding=%s WHERE id=%s", (emb, row["id"]))
+        emb = json.dumps(get_embedding(row[1]))
+        u.execute("UPDATE qa_pairs SET embedding=%s WHERE id=%s", (emb, row[0]))
         i += 1
         if i % batch_size == 0:
             conn.commit()
