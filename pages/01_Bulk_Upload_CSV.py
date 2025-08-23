@@ -9,7 +9,7 @@ st.title("📤 Bulk Upload CSV to Supabase (Postgres)")
 uploaded = st.file_uploader("Upload a CSV file", type=["csv"])
 
 # Our table is 'students'
-table = "students"
+table = "qa_pairs"
 
 mode = st.radio(
     "Load mode",
@@ -27,7 +27,7 @@ if uploaded:
     df = df.replace({np.nan: None})
 
     if mode == "Fast (COPY)":
-        st.info("CSV headers must exactly match the 'students' table column names: id, name, course, year")
+        st.info("CSV headers must exactly match the 'qa_pairs' table column names (e.g., question, answer)")
         if st.button("🚀 Bulk load with COPY"):   # ✅ fixed indent
             try:
                 from database import get_connection
