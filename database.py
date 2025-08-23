@@ -4,6 +4,17 @@ import pandas as pd
 from io import StringIO
 import json
 import numpy as np
+import googel-generativeai as genai
+
+if os.getenv("GEMINI_API_KEY"):
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+def get_embedding(text):
+    """
+    Generate embedding for a text using Gemini API
+    """
+    r = genai.embed_content(model="models/embedding-001", content=text)
+    return r["embedding"]
 # Create DB connection
 def get_connection():
     return psycopg2.connect(
@@ -73,16 +84,16 @@ def add_qa_pair(question, answer):
     conn.commit()
     cur.close()
     conn.close()
+
 def backfill_embeddings(batch_size=50):
     conn = get_connection()
     c = conn.cursor()
-    # fetch rows with NULL or empty embeddings
     c.execute("SELECT id, question FROM qa_pairs WHERE embedding IS NULL OR embedding = ''")
     rows = c.fetchall()
     u = conn.cursor()
     i = 0
     for row in rows:
-        emb = json.dumps(get_embedding(row[1]))  # generate embedding
+        emb = json.dumps(get_embedding(row[1]))  # ✅ now get_embedding is defined
         u.execute("UPDATE qa_pairs SET embedding=%s WHERE id=%s", (emb, row[0]))
         i += 1
         if i % batch_size == 0:
@@ -91,4 +102,3 @@ def backfill_embeddings(batch_size=50):
     u.close()
     c.close()
     conn.close()
-
