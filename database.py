@@ -1,6 +1,5 @@
 import psycopg2
 import os
-from dotenv import load_dotenv
 import google.generativeai as genai
 import numpy as np
 import json
@@ -8,26 +7,29 @@ import faiss
 import streamlit as st
 import io
 
-load_dotenv()
-
 # Configure Gemini
-if os.getenv("GEMINI_API_KEY"):
-    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+if "GEMINI_API_KEY" in st.secrets:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
+
+# ✅ Connection
 def get_connection():
     return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASS"),
-        dbname=os.getenv("DB_NAME")
-        port="5432"
+        host=st.secrets["DB_HOST"],
+        port=st.secrets["DB_PORT"],
+        user=st.secrets["DB_USER"],
+        password=st.secrets["DB_PASS"],
+        dbname=st.secrets["DB_NAME"]
     )
 
+
+# ✅ Get Embedding
 def get_embedding(text):
     r = genai.embed_content(model="models/embedding-001", content=text)
     return r["embedding"]
 
+
+# ✅ Insert one QA pair
 def add_qa_pair(question, answer):
     conn = get_connection()
     cursor = conn.cursor()
@@ -40,6 +42,35 @@ def add_qa_pair(question, answer):
     cursor.close()
     conn.close()
 
+
+# ✅ Bulk insert
+def execute_many_insert(query, values):
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        cur.executemany(query, values)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cur.close()
+        conn.close()
+
+
+# ✅ Bulk upload via CSV
+def copy_via_csv(df, table_name):
+    conn = get_connection()
+    buffer = io.StringIO()
+    df.to_csv(buffer, index=False, header=False)
+    buffer.seek(0)
+    with conn.cursor() as cur:
+        cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV", buffer)
+    conn.commit()
+    conn.close()
+
+
+# ✅ Load FAISS index
 def _load_index():
     conn = get_connection()
     cursor = conn.cursor()
@@ -70,6 +101,8 @@ def _load_index():
     index.add(np.vstack(vecs).astype("float32"))
     return index, answers
 
+
+# ✅ Answer lookup
 def get_answer_from_db(question):
     index, answers = _load_index()
     if index is not None:
@@ -91,6 +124,8 @@ def get_answer_from_db(question):
     conn.close()
     return row[0] if row else None
 
+
+# ✅ Backfill embeddings
 def backfill_embeddings(batch_size=50):
     conn = get_connection()
     c = conn.cursor()
@@ -108,37 +143,3 @@ def backfill_embeddings(batch_size=50):
     u.close()
     c.close()
     conn.close()
-def get_connection():
-    return psycopg2.connect(
-        host=st.secrets["DB_HOST"],
-        port=st.secrets["DB_PORT"],
-        user=st.secrets["DB_USER"],
-        password=st.secrets["DB_PASS"],
-        database=st.secrets["DB_NAME"]
-    )
-
-def execute_many_insert(query, values):
-    """Insert multiple rows into DB."""
-    conn = get_connection()
-    cur = conn.cursor()
-    try:
-        cur.executemany(query, values)
-        conn.commit()
-    except Exception as e:
-        conn.rollback()
-        raise e
-    finally:
-        cur.close()
-        conn.close()
-
-def copy_via_csv(df, table_name, conn):
-    # Create an in-memory CSV buffer
-    buffer = io.StringIO()
-    # Save DataFrame as CSV inside buffer
-    df.to_csv(buffer, index=False, header=False)  # header=False since table already has column names
-    buffer.seek(0)  # reset pointer to beginning
-
-    # Copy into Postgres
-    with conn.cursor() as cur:
-        cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV", buffer)
-    conn.commit()
