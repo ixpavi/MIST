@@ -2,7 +2,7 @@ import os
 import psycopg2
 import pandas as pd
 from io import StringIO
-
+import json
 # Create DB connection
 def get_connection():
     return psycopg2.connect(
