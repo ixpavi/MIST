@@ -17,3 +17,7 @@ add_qa_pair(
     "What is SRM famous for?",
     "SRM is well known for engineering, medical, management, and research programs with strong industry connections."
 )
+add_qa_pair(
+    "Where is University Building in SRM?",
+    "University Building is beside the arch gate in SRM Kattankulathur Campus."
+)
