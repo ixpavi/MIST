@@ -4,7 +4,7 @@ import pandas as pd
 from io import StringIO
 import json
 import numpy as np
-import google-generativeai as genai
+import google.generativeai as genai
 
 if os.getenv("GEMINI_API_KEY"):
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
