@@ -5,6 +5,8 @@ import google.generativeai as genai
 import numpy as np
 import json
 import faiss
+import streamlit as st
+import io
 
 load_dotenv()
 
@@ -105,3 +107,41 @@ def backfill_embeddings(batch_size=50):
     u.close()
     c.close()
     conn.close()
+def get_connection():
+    return psycopg2.connect(
+        host=st.secrets["DB_HOST"],
+        port=st.secrets["DB_PORT"],
+        user=st.secrets["DB_USER"],
+        password=st.secrets["DB_PASS"],
+        database=st.secrets["DB_NAME"]
+    )
+
+def execute_many_insert(query, values):
+    """Insert multiple rows into DB."""
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        cur.executemany(query, values)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cur.close()
+        conn.close()
+
+def copy_via_csv(table_name, csv_file):
+    """Bulk insert CSV into DB using COPY."""
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        # read uploaded file into memory
+        file_data = io.StringIO(csv_file.getvalue().decode("utf-8"))
+        cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV HEADER", file_data)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cur.close()
+        conn.close()
