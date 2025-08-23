@@ -3,6 +3,7 @@ import psycopg2
 import pandas as pd
 from io import StringIO
 import json
+import numpy as np
 # Create DB connection
 def get_connection():
     return psycopg2.connect(
@@ -90,3 +91,4 @@ def backfill_embeddings(batch_size=50):
     u.close()
     c.close()
     conn.close()
+
