@@ -65,25 +65,42 @@ def copy_via_csv(table, df, conn=None):
 
 # Fetch answer from DB if available
 def get_answer_from_db(question):
+    """
+    Fetch answer from qa_pairs table for a given question.
+    Case-insensitive search using ILIKE.
+    """
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT answer FROM qa_pairs WHERE question = %s", (question,))
+    
+    # ILIKE allows case-insensitive matching
+    cur.execute(
+        "SELECT answer FROM qa_pairs WHERE question ILIKE %s LIMIT 1",
+        ("%" + question + "%",)  # % allows partial match
+    )
+    
     row = cur.fetchone()
     cur.close()
     conn.close()
     return row[0] if row else None
 
+
 # Insert new Q/A pair into DB
 def add_qa_pair(question, answer):
     conn = get_connection()
     cur = conn.cursor()
+    
+    # Normalize question: remove leading/trailing spaces
+    question_norm = question.strip()
+    
     cur.execute(
         "INSERT INTO qa_pairs (question, answer) VALUES (%s, %s)",
-        (question, answer)
+        (question_norm, answer)
     )
+    
     conn.commit()
     cur.close()
     conn.close()
+
 
 def backfill_embeddings(batch_size=50):
     conn = get_connection()
