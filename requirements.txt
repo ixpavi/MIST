@@ -1,5 +1,6 @@
 streamlit
-google-generativeai
-better-profanity
+psycopg2-binary
 python-dotenv
+google-generativeai
 faiss-cpu
+numpy
