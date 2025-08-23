@@ -28,22 +28,23 @@ if uploaded:
 
     if mode == "Fast (COPY)":
         st.info("CSV headers must exactly match the 'students' table column names: id, name, course, year")
-        if st.button("🚀 Bulk load with COPY"):
-    try:
-        from database import get_connection
-        conn = get_connection()  # ✅ open connection
-
-        copy_via_csv(df, table, conn)  # ✅ correct order
-
-        st.success("✅ COPY completed!")
-        st.balloons()
-    except Exception as e:
-        st.error(f"❌ COPY failed: {e}")
-    finally:
+       if st.button("🚀 Bulk load with COPY"):
         try:
-            conn.close()
-        except:
-            pass
+            from database import get_connection
+            conn = get_connection()  # ✅ open connection
+
+            copy_via_csv(table, df, conn)  # ✅ correct order
+
+            st.success("✅ COPY completed!")
+            st.balloons()
+        except Exception as e:
+            st.error(f"❌ COPY failed: {e}")
+        finally:
+            try:
+                conn.close()
+            except:
+                pass
+
 
     else:
         st.subheader("Select columns to insert (id is optional if SERIAL)")
