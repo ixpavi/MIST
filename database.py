@@ -10,7 +10,7 @@ def get_connection():
         dbname=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"),
-        port=os.getenv("DB_PORT"),
+        port=os.getenv("DB_PORT", 5432),
     )
 
 # Bulk insert (INSERT mode)
@@ -39,14 +39,7 @@ def copy_via_csv(table, df, conn=None):
     finally:
         cur.close()
         conn.close()
-def get_connection():
-    return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        port=os.getenv("DB_PORT", 5432),
-    )
+
 
 # Fetch answer from DB if available
 def get_answer_from_db(question):
