@@ -28,17 +28,27 @@ def execute_many_insert(table, cols, rows):
 # Bulk copy (COPY mode)
 def copy_via_csv(table, df, conn=None):
     conn = conn or get_connection()
+
+    # 🔥 Drop "id" column if it exists in the CSV
+    if "id" in df.columns:
+        df = df.drop(columns=["id"])
+
     buffer = StringIO()
     df.to_csv(buffer, index=False, header=True)
     buffer.seek(0)
 
     cur = conn.cursor()
     try:
-        cur.copy_expert(f"COPY {table} FROM STDIN WITH CSV HEADER", buffer)
+        # Build the column list dynamically (avoid COPY into id)
+        cols = ','.join(df.columns)
+        sql = f"COPY {table} ({cols}) FROM STDIN WITH CSV HEADER"
+
+        cur.copy_expert(sql, buffer)
         conn.commit()
     finally:
         cur.close()
         conn.close()
+
 
 
 # Fetch answer from DB if available
