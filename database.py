@@ -7,8 +7,8 @@ import json
 import faiss
 
 load_dotenv()
-if os.getenv("GOOGLE_API_KEY"):
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+if os.getenv("GEMINI_API_KEY"):
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def get_connection():
     return mysql.connector.connect(
