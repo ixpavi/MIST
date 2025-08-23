@@ -4,7 +4,6 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 from database import get_answer_from_db, add_qa_pair
-
 def get_srm_response(query):
     db_answer = get_answer_from_db(query)
     if db_answer:
@@ -30,12 +29,9 @@ def get_srm_response(query):
         print("❌ Error while generating response:", e)  # Debug log
         return "I'm experiencing technical difficulties right now. Please try again later."
 
-
 load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.0-flash")
-from database import get_answer_from_db, add_qa_pair
-
 
 
 profanity.load_censor_words()
@@ -88,7 +84,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# -------------------- Custom CSS --------------------
 st.markdown(
     f"""
     <style>
@@ -1120,7 +1115,6 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "response_cache" not in st.session_state:
     st.session_state.response_cache = {}
-
 
 
 
