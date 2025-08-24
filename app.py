@@ -1166,7 +1166,7 @@ if suggested_query:
     with st.chat_message("assistant", avatar="🎓"):
         st.write(bot_reply)
 
-query = st.chat_input("Ask me anything about SRM or any topic...", key="chat_input")
+query = st.chat_input("Ask me anything about SRM or any topic...", key="user_chat_input")
 
 if query:
     # Clear input after sending
