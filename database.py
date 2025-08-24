@@ -5,6 +5,8 @@ from io import StringIO
 import json
 import numpy as np
 import google.generativeai as genai
+import faiss
+
 
 if os.getenv("GEMINI_API_KEY"):
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -65,28 +67,63 @@ def copy_via_csv(table, df, conn=None):
         cur.close()
         conn.close()
 
-
-
-
-# Fetch answer from DB if available
-def get_answer_from_db(question):
-    """
-    Fetch answer from qa_pairs table for a given question.
-    Case-insensitive search using ILIKE.
-    """
+def _load_index():
     conn = get_connection()
-    cur = conn.cursor()
-    
-    # ILIKE allows case-insensitive matching
-    cur.execute(
-        "SELECT answer FROM qa_pairs WHERE question ILIKE %s LIMIT 1",
-        ("%" + question + "%",)  # % allows partial match
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, answer, embedding FROM qa_pairs WHERE embedding IS NOT NULL AND embedding <> ''")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    vecs, answers = [], []
+    for row in rows:
+        try:
+            v = np.array(json.loads(row[2]), dtype="float32")
+            if v.ndim != 1:
+                continue
+            n = np.linalg.norm(v)
+            if n == 0:
+                continue
+            vecs.append(v / n)
+            answers.append(row[1])
+        except Exception:
+            continue
+
+    if not vecs:
+        return None, None
+
+    arr = np.vstack(vecs).astype("float32")
+    index = faiss.IndexFlatIP(arr.shape[1])   # inner product for cosine similarity
+    index.add(arr)
+    return index, answers
+
+
+
+def get_answer_from_db(question, threshold=0.70):
+    index, answers = _load_index()
+    if index is not None:
+        qv = np.array(get_embedding(question), dtype="float32")
+        n = np.linalg.norm(qv)
+        if n != 0:
+            qv = (qv / n).reshape(1, -1)
+            scores, idxs = index.search(qv, 1)  # top-1 result
+            score = float(scores[0][0])
+            pos = int(idxs[0][0])
+            if score >= threshold:
+                return answers[pos]
+
+    # fallback: if no semantic match, try substring
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT answer FROM qa_pairs WHERE LOWER(question) LIKE LOWER(%s) LIMIT 1",
+        ("%" + question + "%",)
     )
-    
-    row = cur.fetchone()
-    cur.close()
+    row = cursor.fetchone()
+    cursor.close()
     conn.close()
     return row[0] if row else None
+
 
 
 # Insert new Q/A pair into DB
