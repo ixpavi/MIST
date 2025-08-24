@@ -57,11 +57,14 @@ def copy_via_csv(table, df, conn=None):
 
         cur.copy_expert(sql, buffer)
         conn.commit()
+
+        # 🔥 Immediately add embeddings for new rows
         backfill_embeddings()
 
     finally:
         cur.close()
         conn.close()
+
 
 
 
