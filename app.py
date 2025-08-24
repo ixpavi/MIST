@@ -927,14 +927,14 @@ height=0,
 )
 
     
-    // Run when page loads
+  
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', addCopyButtons);
     } else {
         addCopyButtons();
     }
     
-    // Run after Streamlit updates
+    
     const observer = new MutationObserver(addCopyButtons);
     observer.observe(document.body, { childList: true, subtree: true });
     </script>
