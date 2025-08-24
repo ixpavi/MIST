@@ -57,7 +57,7 @@ def copy_via_csv(table, df, conn=None):
 
         cur.copy_expert(sql, buffer)
         conn.commit()
-backfill_embeddings()
+        backfill_embeddings()
 
     finally:
         cur.close()
