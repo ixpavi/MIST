@@ -846,65 +846,86 @@ st.markdown(
 
 # Add JavaScript for copy functionality
 st.components.v1.html(
-    """
-    <script>
-    function addCopyButtons() {
-        const chatMessages = document.querySelectorAll('.stChatMessage');
-        chatMessages.forEach((message, index) => {
-            if (!message.querySelector('.copy-button')) {
-                const copyButton = document.createElement('button');
-                copyButton.className = 'copy-button';
-                copyButton.innerHTML = '📋';
-                copyButton.title = 'Copy message';
-                copyButton.style.cssText = 'position: absolute; top: 8px; right: 8px; background: rgba(255, 255, 255, 0.9); color: #333; border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: all 0.3s ease; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10;';
-                
-                copyButton.addEventListener('click', function() {
-                    const messageContent = message.querySelector('[data-testid="stChatMessageContent"]');
-                    if (messageContent) {
-                        const text = messageContent.textContent || messageContent.innerText;
-                        navigator.clipboard.writeText(text).then(() => {
-                            copyButton.innerHTML = '✓';
-                            copyButton.style.background = '#10B981';
-                            copyButton.style.color = 'white';
-                            setTimeout(() => {
-                                copyButton.innerHTML = '📋';
-                                copyButton.style.background = 'rgba(255, 255, 255, 0.9)';
-                                copyButton.style.color = '#333';
-                            }, 2000);
-                        });
-                    }
-                });
-                
-                message.appendChild(copyButton);
-                
-                // Show button on hover
-                message.addEventListener('mouseenter', () => {
-                    copyButton.style.opacity = '1';
-                    copyButton.style.transform = 'scale(1.1)';
-                });
-                
-                message.addEventListener('mouseleave', () => {
-                    copyButton.style.opacity = '0';
-                    copyButton.style.transform = 'scale(1)';
-                });
+"""
+<script>
+function addCopyButtons() {
+    const chatMessages = document.querySelectorAll('.stChatMessage');
+    chatMessages.forEach((message, index) => {
+        if (!message.querySelector('.copy-button')) {
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-button';
+            copyButton.innerHTML = '📋';
+            copyButton.title = 'Copy message';
+            copyButton.style.cssText = 'position: absolute; top: 8px; right: 8px; background: rgba(255, 255, 255, 0.9); color: #333; border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: all 0.3s ease; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10;';
+            copyButton.addEventListener('click', function() {
+                const messageContent = message.querySelector('[data-testid="stChatMessageContent"]');
+                if (messageContent) {
+                    const text = messageContent.textContent || messageContent.innerText;
+                    navigator.clipboard.writeText(text).then(() => {
+                        copyButton.innerHTML = '✓';
+                        copyButton.style.background = '#10B981';
+                        copyButton.style.color = 'white';
+                        setTimeout(() => {
+                            copyButton.innerHTML = '📋';
+                            copyButton.style.background = 'rgba(255, 255, 255, 0.9)';
+                            copyButton.style.color = '#333';
+                        }, 2000);
+                    });
+                }
+            });
+            message.appendChild(copyButton);
+            // Show button on hover
+            message.addEventListener('mouseenter', () => {
+                copyButton.style.opacity = '1';
+                copyButton.style.transform = 'scale(1.1)';
+            });
+            message.addEventListener('mouseleave', () => {
+                copyButton.style.opacity = '0';
+                copyButton.style.transform = 'scale(1)';
+            });
+        }
+    });
+}
+
+// NEW: Enter key handler for chat input
+function setupEnterKeyHandler() {
+    const chatInput = document.querySelector('div[data-testid="stChatInput"] textarea');
+    if (chatInput && !chatInput.hasAttribute('data-enhanced')) {
+        chatInput.setAttribute('data-enhanced', 'true');
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const sendButton = document.querySelector('div[data-testid="stChatInput"] button');
+                if (sendButton && chatInput.value.trim()) {
+                    sendButton.click();
+                }
             }
         });
     }
-    
-    // Run when page loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', addCopyButtons);
-    } else {
+}
+
+// Run when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
         addCopyButtons();
-    }
-    
-    // Run after Streamlit updates
-    const observer = new MutationObserver(addCopyButtons);
-    observer.observe(document.body, { childList: true, subtree: true });
-    </script>
-    """,
-    height=0,
+        setupEnterKeyHandler();
+    });
+} else {
+    addCopyButtons();
+    setupEnterKeyHandler();
+}
+
+// Run after Streamlit updates
+const observer = new MutationObserver(function() {
+    addCopyButtons();
+    setupEnterKeyHandler();
+});
+observer.observe(document.body, { childList: true, subtree: true });
+</script>
+""",
+height=0,
 )
+
 
 # -------------------- Sidebar --------------------
 with st.sidebar:
