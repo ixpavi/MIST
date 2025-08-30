@@ -1166,70 +1166,8 @@ if suggested_query:
     with st.chat_message("assistant", avatar="🎓"):
         st.write(bot_reply)
 
-# Regular chat input (Enter = Send)
-query = st.text_input("Ask me anything about SRM or any topic...", key="chat_input", placeholder="Type your message and press Enter")
-
-if query:
-    # Clear input after sending
-    st.session_state.chat_input = ""
-
-    st.session_state.messages.append({"role": "user", "content": query})
-    with st.chat_message("user", avatar="👤"):
-        st.write(query)
-
-    # Bot Logic for regular chat input
-    if profanity.contains_profanity(query):
-        bot_reply = "⚠️ Please keep our conversation respectful and appropriate."
-    elif query.lower().strip() in ["hi", "hello", "hey", "sup", "what's up"]:
-        bot_reply = f"Hello {st.session_state.username}! 😊 I'm MIST AI, your SRM assistant." if st.session_state.username else "Hello! 😊 I'm MIST AI, your SRM assistant."
-    elif any(phrase in query.lower() for phrase in ["who are you", "what can you do", "what are you", "help me"]):
-        bot_reply = "I'm MIST AI 🎓\n\nI can help you with:\n• Admissions, courses, and departments\n• Campus facilities & student life\n• General questions in SRM context\n• Academic programs & opportunities"
-    elif any(phrase in query.lower() for phrase in ["thank you", "thanks", "thx"]):
-        bot_reply = f"You're very welcome, {st.session_state.username}! 😊" if st.session_state.username else "You're very welcome! 😊"
-    else:
-        cache_key = query.lower().strip()
-        if cache_key in st.session_state.response_cache:
-            bot_reply = st.session_state.response_cache[cache_key]
-        else:
-            with st.spinner("Let me think about that in SRM context..."):
-                bot_reply = get_srm_response(query)
-                st.session_state.response_cache[cache_key] = bot_reply
-
-    st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-    with st.chat_message("assistant", avatar="🎓"):
-        st.write(bot_reply)
-
-
-if query:
-    # Clear input after sending
-    st.session_state.chat_input = ""
-
-    st.session_state.messages.append({"role": "user", "content": query})
-    with st.chat_message("user", avatar="👤"):
-        st.write(query)
-
-    # Bot Logic for regular chat input
-    if profanity.contains_profanity(query):
-        bot_reply = "⚠️ Please keep our conversation respectful and appropriate."
-    elif query.lower().strip() in ["hi", "hello", "hey", "sup", "what's up"]:
-        bot_reply = f"Hello {st.session_state.username}! 😊 I'm MIST AI, your SRM assistant." if st.session_state.username else "Hello! 😊 I'm MIST AI, your SRM assistant."
-    elif any(phrase in query.lower() for phrase in ["who are you", "what can you do", "what are you", "help me"]):
-        bot_reply = "I'm MIST AI 🎓\n\nI can help you with:\n• Admissions, courses, and departments\n• Campus facilities & student life\n• General questions in SRM context\n• Academic programs & opportunities"
-    elif any(phrase in query.lower() for phrase in ["thank you", "thanks", "thx"]):
-        bot_reply = f"You're very welcome, {st.session_state.username}! 😊" if st.session_state.username else "You're very welcome! 😊"
-    else:
-        cache_key = query.lower().strip()
-        if cache_key in st.session_state.response_cache:
-            bot_reply = st.session_state.response_cache[cache_key]
-        else:
-            with st.spinner("Let me think about that in SRM context..."):
-                bot_reply = get_srm_response(query)
-                st.session_state.response_cache[cache_key] = bot_reply
-
-    st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-    with st.chat_message("assistant", avatar="🎓"):
-        st.write(bot_reply)
-
+# Regular chat input for new messages
+query = st.chat_input("Ask me anything about SRM or any topic...", key="chat_input")
 
 if query:
     st.session_state.messages.append({"role": "user", "content": query})
