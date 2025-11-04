@@ -13,10 +13,19 @@ if os.getenv("GEMINI_API_KEY"):
 
 def get_embedding(text):
     """
-    Generate embedding for a text using Gemini API
+    Temporary quick fix: skip embeddings when quota is exhausted.
     """
-    r = genai.embed_content(model="models/embedding-001", content=text)
-    return r["embedding"]
+    try:
+        r = genai.embed_content(model="models/embedding-001", content=text[:3000])
+        return r["embedding"]
+    except Exception as e:
+        # If quota is exhausted, just skip embedding so app still works
+        if "ResourceExhausted" in str(e) or "quota" in str(e).lower():
+            print("⚠️ Embedding quota exceeded – skipping embeddings for now.")
+            return []  # empty vector
+        print("❌ Embedding error:", e)
+        return []
+
 # Create DB connection
 def get_connection():
     return psycopg2.connect(
