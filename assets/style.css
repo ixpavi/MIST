@@ -1,0 +1,18 @@
+/* Theme tokens are injected by app.py as :root variables (--bg, --card, --text, --muted, --border, --accent) */
+.stApp { background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%); color: var(--text); }
+section[data-testid="stSidebar"] { background: var(--card) !important; border-right: 1px solid var(--border); }
+h1.mist-title {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  text-align: center; font-weight: 800; font-size: clamp(2rem, 5vw, 3.2rem); margin: .5rem 0 .25rem;
+}
+.mist-sub { text-align: center; color: var(--muted); margin-bottom: 1rem; }
+.stChatMessage { border: 1px solid var(--border); border-radius: 16px; background: var(--card); }
+.stButton > button {
+  border-radius: 12px; border: 1px solid var(--border); font-weight: 600; transition: transform .15s;
+}
+.stButton > button:hover { transform: translateY(-1px); border-color: var(--accent); color: var(--accent); }
+.mist-src { font-size: .8rem; color: var(--muted); }
+.mist-badge { display:inline-block; font-size:.72rem; padding:2px 8px; border-radius:999px;
+  border:1px solid var(--border); color: var(--muted); margin-right:6px; }
+#MainMenu, footer { visibility: hidden; }

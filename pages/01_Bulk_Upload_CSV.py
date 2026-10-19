@@ -1,76 +1,64 @@
-import streamlit as st
+"""Admin page: teach MIST AI new facts by uploading a CSV (columns: topic, text, optional campus, source)."""
+import hashlib
+
 import pandas as pd
-import numpy as np
-from database import execute_many_insert, copy_via_csv, backfill_embeddings, get_connection
+import streamlit as st
 
-st.set_page_config(page_title="Bulk CSV Upload", page_icon="📤", layout="wide")
-st.title("📤 Bulk Upload CSV to Supabase (Postgres)")
+import config
+import database
+import rag
 
-uploaded = st.file_uploader("Upload a CSV file", type=["csv"])
+st.set_page_config(page_title="MIST AI - Admin", page_icon="🛠️", layout="wide")
+st.title("🛠️ Admin: train the knowledge base")
 
-# Our table
-table = "qa_pairs"
+password = config.get("ADMIN_PASSWORD")
+if not password:
+    st.warning("Set ADMIN_PASSWORD in your secrets/.env to enable this page.")
+    st.stop()
+if st.text_input("Admin password", type="password") != password:
+    st.stop()
 
-mode = st.radio(
-    "Load mode",
-    ["Fast (COPY)", "Safe (INSERT)"],
-    index=0,
-    help="COPY requires CSV headers match DB column names. INSERT lets you pick columns."
-)
+if not database.is_configured():
+    st.error("Database not configured - uploads need Supabase (DB_HOST, DB_USER, DB_PASS).")
+    st.stop()
 
-if uploaded:
+with st.expander("Dashboard", expanded=True):
     try:
-        df = pd.read_csv(uploaded)
-        st.subheader("Preview")
-        st.dataframe(df.head(20), use_container_width=True)
-
-        # Replace NaN with None for DB
-        df = df.replace({np.nan: None})
-
-        # Remove 'id' column if present
-        if "id" in df.columns:
-            df = df.drop(columns=["id"])
-
-        if mode == "Fast (COPY)":
-            st.info("CSV headers must exactly match the 'qa_pairs' table columns (e.g., question, answer)")
-            if st.button("🚀 Bulk load with COPY"):
-                conn = get_connection()
-                try:
-                    copy_via_csv(table, df, conn)
-                    st.success("✅ COPY completed!")
-
-                    # Generate embeddings for new rows
-                    backfill_embeddings()
-                    st.success("✅ Embeddings generated for all new rows!")
-                    st.balloons()
-                except Exception as e:
-                    st.error(f"❌ COPY failed: {e}")
-                finally:
-                    try:
-                        conn.close()
-                    except:
-                        pass
-
-        else:  # Safe INSERT mode
-            st.subheader("Select columns to insert (id is optional if SERIAL)")
-            cols = st.multiselect(
-                "Columns to insert:",
-                options=list(df.columns),
-                default=[c for c in df.columns if c != "id"]
-            )
-
-            if st.button("⬇️ Bulk insert (INSERT)"):
-                try:
-                    rows = [tuple(rec) for rec in df[cols].itertuples(index=False, name=None)]
-                    execute_many_insert(table, cols, rows)
-                    st.success("✅ INSERT completed!")
-
-                    # Generate embeddings for new rows
-                    backfill_embeddings()
-                    st.success("✅ Embeddings generated for all new rows!")
-                    st.balloons()
-                except Exception as e:
-                    st.error(f"❌ INSERT failed: {e}")
-
+        s = database.get_stats()
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Questions", s["total"])
+        c2.metric("Answered from KB", s["grounded"])
+        c3.metric("👍", s["up"])
+        c4.metric("👎", s["down"])
     except Exception as e:
-        st.error(f"❌ Failed to read CSV: {e}")
+        st.info(f"Stats unavailable (has the schema been created? run `python ingest.py --init`): {e}")
+
+with st.expander("Learning loop: promote answers students rated 👍", expanded=False):
+    try:
+        liked = database.get_liked()
+        st.write(f"{len(liked)} helpful answers waiting.")
+        if liked and st.button("Add them to the knowledge base"):
+            import ingest
+            chunks = ingest.liked_chunks()
+            rag.ensure_embeddings(chunks)
+            database.upsert_chunks(chunks)
+            st.cache_resource.clear()
+            st.success(f"Promoted {len(chunks)} answers.")
+    except Exception as e:
+        st.info(f"Unavailable: {e}")
+
+uploaded = st.file_uploader("CSV with columns: topic, text, [campus], [source]", type=["csv"])
+if uploaded:
+    df = pd.read_csv(uploaded).fillna("")
+    if not {"topic", "text"}.issubset(df.columns):
+        st.error("CSV needs at least the columns: topic, text")
+        st.stop()
+    st.dataframe(df.head(20), use_container_width=True)
+    if st.button("🚀 Embed and save"):
+        chunks = [{"id": "csv-" + hashlib.sha1(r["text"].encode()).hexdigest()[:12], "topic": r["topic"],
+                   "campus": r.get("campus") or "All", "text": r["text"], "source": r.get("source") or None}
+                  for _, r in df.iterrows() if str(r["text"]).strip()]
+        rag.ensure_embeddings(chunks)
+        database.upsert_chunks(chunks)
+        st.cache_resource.clear()
+        st.success(f"Saved {len(chunks)} entries. The assistant will use them right away.")

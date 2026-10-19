@@ -1,9 +1,9 @@
-streamlit
+streamlit>=1.40
 better-profanity
 psycopg2-binary
 python-dotenv
-google-generativeai
-faiss-cpu
-numpy
-sqlalchemy
+google-genai
+scikit-learn
+joblib
 pandas
+numpy
